@@ -190,6 +190,7 @@ class _DatabasePageState extends State<DatabasePage> {
           'Database CRUD Demo',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
         backgroundColor: const Color(0xFF0b1221),
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -277,7 +278,7 @@ class _DatabasePageState extends State<DatabasePage> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: const Color(0xFF1f2937),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.3),

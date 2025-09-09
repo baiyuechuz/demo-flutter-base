@@ -11,6 +11,7 @@ class AuthenticationPage extends StatelessWidget {
           'Authentication',
           style: TextStyle(color: Colors.white),
         ),
+        centerTitle: true,
         backgroundColor: const Color(0xFF0b1221),
         iconTheme: const IconThemeData(color: Colors.white),
       ),

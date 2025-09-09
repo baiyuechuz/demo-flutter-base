@@ -186,17 +186,11 @@ class _RealtimeDatabasePageState extends State<RealtimeDatabasePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            const Text(
-              'Real-time Data',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        title: const Text(
+          'Real-time Data',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
         backgroundColor: const Color(0xFF0b1221),
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,

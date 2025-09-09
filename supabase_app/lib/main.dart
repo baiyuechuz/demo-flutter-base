@@ -45,6 +45,7 @@ class HomePage extends StatelessWidget {
           'Supabase Demo',
           style: TextStyle(color: Colors.white),
         ),
+        centerTitle: true,
         backgroundColor: Color(0xFF0b1221),
       ),
       backgroundColor: Color(0xFF0b1221),
