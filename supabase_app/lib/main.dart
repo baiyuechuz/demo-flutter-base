@@ -4,10 +4,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Load environment variables
   await dotenv.load(fileName: ".env");
-  
+
   // Initialize Supabase with environment variables
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +42,9 @@ class HomePage extends StatelessWidget {
           children: [
             const Text("Hello World"),
             const SizedBox(height: 20),
-            Text("Supabase URL: ${dotenv.env['SUPABASE_URL'] ?? 'Not configured'}"),
+            Text(
+              "Supabase URL: ${dotenv.env['SUPABASE_URL'] ?? 'Not configured'}",
+            ),
           ],
         ),
       ),

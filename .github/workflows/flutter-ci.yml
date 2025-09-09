@@ -31,7 +31,7 @@ jobs:
       - name: Check Firebase formatting
         run: |
           cd firebase_app
-          dart format --set-exit-if-changed .
+          dart format --output=none --set-exit-if-changed .
   test-supabase-app:
     name: Test Supabase App
     runs-on: ubuntu-latest
@@ -58,4 +58,4 @@ jobs:
       - name: Check Supabase formatting
         run: |
           cd supabase_app
-          dart format --set-exit-if-changed .
+          dart format --output=none --set-exit-if-changed .

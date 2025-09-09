@@ -4,13 +4,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Load environment variables
   await dotenv.load(fileName: ".env");
-  
+
   // Initialize Firebase
   await Firebase.initializeApp();
-  
+
   runApp(const MyApp());
 }
 
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +39,9 @@ class HomePage extends StatelessWidget {
           children: [
             const Text("Hello World"),
             const SizedBox(height: 20),
-            Text("Project ID: ${dotenv.env['FIREBASE_PROJECT_ID'] ?? 'Not configured'}"),
+            Text(
+              "Project ID: ${dotenv.env['FIREBASE_PROJECT_ID'] ?? 'Not configured'}",
+            ),
           ],
         ),
       ),
