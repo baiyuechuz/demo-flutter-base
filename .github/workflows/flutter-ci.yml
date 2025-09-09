@@ -1,0 +1,61 @@
+name: Flutter CI
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+jobs:
+  test-firebase-app:
+    name: Test Firebase App
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      - name: Create Firebase .env file
+        run: |
+          cd firebase_app
+          cp .env.example .env
+      - name: Get Firebase dependencies
+        run: |
+          cd firebase_app
+          flutter pub get
+      - name: Analyze Firebase app
+        run: |
+          cd firebase_app
+          flutter analyze
+      - name: Check Firebase formatting
+        run: |
+          cd firebase_app
+          dart format --set-exit-if-changed .
+  test-supabase-app:
+    name: Test Supabase App
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      - name: Create Supabase .env file
+        run: |
+          cd supabase_app
+          cp .env.example .env
+      - name: Get Supabase dependencies
+        run: |
+          cd supabase_app
+          flutter pub get
+      - name: Analyze Supabase app
+        run: |
+          cd supabase_app
+          flutter analyze
+      - name: Check Supabase formatting
+        run: |
+          cd supabase_app
+          dart format --set-exit-if-changed .
