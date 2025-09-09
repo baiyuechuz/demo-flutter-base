@@ -48,16 +48,13 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Hello World", style: TextStyle(color: Colors.white)),
-            const SizedBox(height: 20),
-            Text(
-              "Supabase URL: ${dotenv.env['SUPABASE_URL'] ?? 'Not configured'}",
-              style: TextStyle(color: Colors.white),
+            const Text(
+              "Select a button to see feature demo",
+              style: TextStyle(color: Colors.white, fontSize: 16),
             ),
-            const SizedBox(height: 40),
-            // Example usage of the custom button component
+            const SizedBox(height: 20),
             CustomGradientButton(
-              text: "Click Me!",
+              text: "Database",
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Button pressed!')),
@@ -66,18 +63,30 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             CustomGradientButton(
-              text: "Custom Width",
-              width: 250,
+              text: "Realtime Database",
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Custom width button pressed!')),
+                  const SnackBar(content: Text('Button pressed!')),
                 );
               },
             ),
             const SizedBox(height: 20),
             CustomGradientButton(
-              text: "Disabled",
-              onPressed: null, // Disabled button
+              text: "Storage",
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Button pressed!')),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            CustomGradientButton(
+              text: "Authentication",
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Button pressed!')),
+                );
+              },
             ),
           ],
         ),
