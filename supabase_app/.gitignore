@@ -49,3 +49,4 @@ app.*.map.json
 
 # docs 
 SQL_SETUP.md
+REALTIME_SETUP.md
