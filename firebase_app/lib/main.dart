@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'components/custom_button.dart';
+import 'pages/authentication.dart';
+import 'pages/database.dart';
+import 'pages/realtime_database.dart';
+import 'pages/storage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,8 +52,9 @@ class HomePage extends StatelessWidget {
             CustomGradientButton(
               text: "Database",
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Button pressed!')),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const DatabasePage()),
                 );
               },
             ),
@@ -57,8 +62,11 @@ class HomePage extends StatelessWidget {
             CustomGradientButton(
               text: "Realtime Database",
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Button pressed!')),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RealtimeDatabasePage(),
+                  ),
                 );
               },
             ),
@@ -66,8 +74,9 @@ class HomePage extends StatelessWidget {
             CustomGradientButton(
               text: "Storage",
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Button pressed!')),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const StoragePage()),
                 );
               },
             ),
@@ -75,8 +84,11 @@ class HomePage extends StatelessWidget {
             CustomGradientButton(
               text: "Authentication",
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Button pressed!')),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AuthenticationPage(),
+                  ),
                 );
               },
             ),
