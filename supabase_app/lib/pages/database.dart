@@ -231,8 +231,8 @@ class _DatabasePageState extends State<DatabasePage> {
               decoration: const BoxDecoration(
                 color: Color(0xFF111827),
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(25),
-                  topRight: Radius.circular(25),
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
                 ),
               ),
               child: Column(
@@ -277,7 +277,7 @@ class _DatabasePageState extends State<DatabasePage> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: const Color(0xFF1f2937),
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.3),
