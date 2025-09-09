@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'components/custom_button.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables
   await dotenv.load(fileName: ".env");
-
-  // Initialize Firebase
-  await Firebase.initializeApp();
 
   runApp(const MyApp());
 }
@@ -32,15 +28,57 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Firebase Demo')),
+      appBar: AppBar(
+        title: const Text(
+          'Firebase Demo',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Color(0xFF0b1221),
+      ),
+      backgroundColor: Color(0xFF0b1221),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Hello World"),
+            const Text(
+              "Select a button to see feature demo",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
             const SizedBox(height: 20),
-            Text(
-              "Project ID: ${dotenv.env['FIREBASE_PROJECT_ID'] ?? 'Not configured'}",
+            CustomGradientButton(
+              text: "Database",
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Button pressed!')),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            CustomGradientButton(
+              text: "Realtime Database",
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Button pressed!')),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            CustomGradientButton(
+              text: "Storage",
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Button pressed!')),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            CustomGradientButton(
+              text: "Authentication",
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Button pressed!')),
+                );
+              },
             ),
           ],
         ),
