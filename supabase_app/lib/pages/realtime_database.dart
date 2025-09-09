@@ -416,4 +416,3 @@ class _RealtimeDatabasePageState extends State<RealtimeDatabasePage> {
     );
   }
 }
-

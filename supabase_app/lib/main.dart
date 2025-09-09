@@ -72,7 +72,9 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const RealtimeDatabasePage()),
+                  MaterialPageRoute(
+                    builder: (context) => const RealtimeDatabasePage(),
+                  ),
                 );
               },
             ),
@@ -92,7 +94,9 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const AuthenticationPage()),
+                  MaterialPageRoute(
+                    builder: (context) => const AuthenticationPage(),
+                  ),
                 );
               },
             ),
