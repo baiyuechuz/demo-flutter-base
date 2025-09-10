@@ -14,13 +14,24 @@ export default function Home() {
      `,
 			}}
 		>
-			<h1 className="text-4xl font-bold">Welcome to the Web Docs!</h1>
-			<p className="text-2xl font-medium text-muted-foreground">
+			<h1 className="text-4xl font-bold text-center">
+				Welcome to the Web Docs!
+			</h1>
+			<p className="text-2xl font-medium text-muted-foreground text-center">
 				This is a website demo for repositories
 			</p>
 			<a href="/doc">
 				<Button>Get Started</Button>
 			</a>
+			<div className="fixed bottom-3 left-1/2 -translate-x-1/2 flex justify-center items-center flex-col gap-2 w-full">
+				<span className="font-medium text-md">Made with by</span>
+				<ul className="flex flex-wrap w-full justify-center items-center gap-2">
+					<li className="border rounded-full py-0.5 px-3">Trần Đức Tài</li>
+					<li className="border rounded-full py-0.5 px-3">Nguyễn Đình Thống</li>
+					<li className="border rounded-full py-0.5 px-3">Lưu Phúc Khang</li>
+					<li className="border rounded-full py-0.5 px-3">Dương Gia Bảo</li>
+				</ul>
+			</div>
 		</div>
 	);
 }
