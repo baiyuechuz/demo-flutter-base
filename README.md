@@ -2,7 +2,7 @@
 
 This repository contains two Flutter applications demonstrating integration with Firebase and Supabase, both configured with environment variables using dotenv for secure configuration management.
 
-## 📱 Applications
+## Applications
 
 ### Firebase App
 
@@ -20,7 +20,7 @@ A Flutter application integrated with Supabase, featuring:
 - Environment-based configuration
 - Secure credential management
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -62,7 +62,7 @@ For detailed setup instructions, see:
 - [Firebase App Setup](firebase_app/SETUP.md)
 - [Supabase App Setup](supabase_app/SETUP.md)
 
-## 🔧 CI/CD Pipeline
+## CI/CD Pipeline
 
 This repository includes comprehensive GitHub Actions workflows:
 
@@ -81,21 +81,14 @@ This repository includes comprehensive GitHub Actions workflows:
   - Dependency vulnerability scanning
   - Security scanning with Trivy
 
-## 📊 Workflow Status
-
-| Workflow     | Status                                                                                                                                                                          | Description                     |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| Flutter CI   | [![Flutter CI](https://github.com/YOUR_USERNAME/YOUR_REPO/workflows/Flutter%20CI/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/flutter-ci.yml)       | Continuous integration checks   |
-| Code Quality | [![Code Quality](https://github.com/YOUR_USERNAME/YOUR_REPO/workflows/Code%20Quality/badge.svg)](https://github.com/YOUR_USERNAME/YOUR_REPO/actions/workflows/code-quality.yml) | Code quality and security scans |
-
-## 🛡️ Security
+## Security
 
 - Environment variables are properly configured in `.gitignore`
 - Sensitive credentials are never committed to version control
 - Security scanning is integrated into the CI pipeline
 - Dependency vulnerability checks run daily
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 ├── .github/
@@ -113,7 +106,7 @@ This repository includes comprehensive GitHub Actions workflows:
 └── README.md              # This file
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -121,11 +114,4 @@ This repository includes comprehensive GitHub Actions workflows:
 4. Ensure all CI checks pass
 5. Submit a pull request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ---
-
-**Note**: Replace `YOUR_USERNAME/YOUR_REPO` in the badge URLs with your actual GitHub username and repository name to display live workflow status.
-
