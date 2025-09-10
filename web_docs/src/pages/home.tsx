@@ -7,9 +7,9 @@ export default function Home() {
 			<p className="text-2xl font-medium text-muted-foreground">
 				This is a website demo for repositories
 			</p>
-			<div>
+			<a href="/doc">
 				<Button>Get Started</Button>
-			</div>
+			</a>
 		</div>
 	);
 }
