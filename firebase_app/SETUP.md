@@ -1,44 +1,107 @@
-# Firebase App Setup
+# Quick Setup Guide
 
-This Flutter app uses environment variables to manage Firebase configuration securely.
+This is a quick setup guide for getting the Firebase Flutter app running. For comprehensive setup instructions, see [FIREBASE_SETUP.md](./FIREBASE_SETUP.md).
 
-## Setup Instructions
+## Prerequisites
 
-1. **Copy the environment template:**
-   ```bash
-   cp .env.example .env
-   ```
+- Flutter SDK installed
+- Firebase account
+- Git repository cloned
 
-2. **Configure your Firebase project:**
-   - Go to the [Firebase Console](https://console.firebase.google.com/)
-   - Create a new project or select an existing one
-   - Go to Project Settings > General > Your apps
-   - Add a new app or select your existing app
-   - Copy the configuration values
+## Quick Setup Steps
 
-3. **Update the .env file:**
-   Open the `.env` file and replace the placeholder values with your actual Firebase configuration:
-   ```
-   FIREBASE_API_KEY=your_actual_api_key
-   FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
-   FIREBASE_PROJECT_ID=your_actual_project_id
-   FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
-   FIREBASE_MESSAGING_SENDER_ID=your_actual_sender_id
-   FIREBASE_APP_ID=your_actual_app_id
-   ```
+### 1. Install Required Tools
 
-4. **Install dependencies:**
-   ```bash
-   flutter pub get
-   ```
+```bash
+# Install Firebase CLI
+npm install -g firebase-tools
 
-5. **Run the app:**
-   ```bash
-   flutter run
-   ```
+# Install FlutterFire CLI
+dart pub global activate flutterfire_cli
 
-## Security Notes
+# Login to Firebase
+firebase login
+```
 
-- The `.env` file is ignored by git and should never be committed to version control
-- Keep your Firebase configuration values secure and never share them publicly
-- Use different Firebase projects for development, staging, and production environments
+### 2. Configure Firebase
+
+```bash
+# In the firebase_app directory, run:
+flutterfire configure
+```
+
+This will:
+- List your Firebase projects
+- Let you select which project to use
+- Generate required configuration files automatically
+
+### 3. Set Up Environment Variables (Optional)
+
+```bash
+# Copy the environment template
+cp .env.example .env
+
+# Edit .env with your specific values if needed
+```
+
+### 4. Install Dependencies and Run
+
+```bash
+# Install Flutter dependencies
+flutter pub get
+
+# Run the app
+flutter run
+```
+
+## What Gets Generated
+
+After running `flutterfire configure`, you should have:
+
+- `android/app/google-services.json` - Android Firebase config
+- `ios/Runner/GoogleService-Info.plist` - iOS Firebase config  
+- `macos/Runner/GoogleService-Info.plist` - macOS Firebase config
+- `lib/firebase_options.dart` - Flutter Firebase options
+- `firebase.json` - Firebase project configuration
+
+## Troubleshooting
+
+### Common Issues:
+
+**"No Firebase projects found"**
+- Make sure you're logged in: `firebase login`
+- Check you have projects in [Firebase Console](https://console.firebase.google.com/)
+
+**"FlutterFire command not found"**
+- Install FlutterFire CLI: `dart pub global activate flutterfire_cli`
+- Make sure Dart's global packages are in your PATH
+
+**Build errors**
+- Run `flutter clean && flutter pub get`
+- For iOS: `cd ios && pod install`
+
+### Need More Help?
+
+📖 **[See the complete Firebase setup guide](./FIREBASE_SETUP.md)** for:
+- Detailed step-by-step instructions
+- Platform-specific setup
+- Security configuration
+- Advanced troubleshooting
+- Firebase services configuration
+
+## Security Reminders
+
+⚠️ **Important**: 
+- Firebase configuration files are automatically gitignored
+- Never commit API keys or sensitive configuration
+- Use different Firebase projects for dev/staging/production
+- Configure proper Firebase security rules
+
+## Next Steps
+
+After setup:
+1. Test authentication features
+2. Try database operations
+3. Upload files to storage
+4. Configure Firebase security rules
+5. Set up different environments (dev/prod)
