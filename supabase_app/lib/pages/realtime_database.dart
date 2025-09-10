@@ -274,7 +274,7 @@ class _RealtimeDatabasePageState extends State<RealtimeDatabasePage> {
                 ),
 
                 // Counter Demo Section
-                Expanded(child: _buildCounterSection()),
+                Flexible(child: _buildCounterSection()),
               ],
             ),
     );
@@ -286,7 +286,7 @@ class _RealtimeDatabasePageState extends State<RealtimeDatabasePage> {
         int.tryParse(counterData?['value']?.toString() ?? '0') ?? 0;
 
     return Container(
-      margin: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
         color: const Color(0xFF1f2937),
@@ -300,6 +300,7 @@ class _RealtimeDatabasePageState extends State<RealtimeDatabasePage> {
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
             'Real-time Counter',

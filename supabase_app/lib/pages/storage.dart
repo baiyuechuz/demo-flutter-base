@@ -27,17 +27,75 @@ class _StoragePageState extends State<StoragePage> {
   Future<void> _loadProfileImage() async {
     try {
       final user = supabase.auth.currentUser;
-      if (user != null) {
-        final response = await supabase.storage
-            .from('profiles')
-            .createSignedUrl('profile_${user.id}.jpg', 60 * 60);
-
+      if (user == null) {
+        print('User not authenticated - cannot load profile image');
         setState(() {
-          _profileImageUrl = response;
+          _profileImageUrl = null;
         });
+        return;
+      }
+
+      final String fileName = '${user.id}/profile_${user.id}.jpg';
+
+      // Check if file exists first
+      try {
+        final files = await supabase.storage
+            .from('profiles')
+            .list(path: user.id);
+        
+        final fileExists = files.any((file) => file.name == 'profile_${user.id}.jpg');
+        
+        if (!fileExists) {
+          print('Profile image does not exist yet');
+          setState(() {
+            _profileImageUrl = null;
+          });
+          return;
+        }
+      } catch (e) {
+        print('Error checking file existence: $e');
+        setState(() {
+          _profileImageUrl = null;
+        });
+        return;
+      }
+
+      // Try to get public URL first (if bucket is public)
+      try {
+        final String publicUrl = supabase.storage
+            .from('profiles')
+            .getPublicUrl(fileName);
+        
+        // Add cache-busting parameter
+        final String cacheBustedUrl = '$publicUrl?t=${DateTime.now().millisecondsSinceEpoch}';
+        
+        setState(() {
+          _profileImageUrl = cacheBustedUrl;
+        });
+        print('Loaded profile image: $cacheBustedUrl');
+      } catch (e) {
+        // If public URL fails, try signed URL
+        try {
+          final response = await supabase.storage
+              .from('profiles')
+              .createSignedUrl(fileName, 60 * 60);
+
+          setState(() {
+            _profileImageUrl = response;
+          });
+          print('Loaded profile image (signed): $response');
+        } catch (signedUrlError) {
+          print('Could not get signed URL: $signedUrlError');
+          setState(() {
+            _profileImageUrl = null;
+          });
+        }
       }
     } catch (e) {
-      // Image doesn't exist yet, that's okay
+      print('Could not load profile image: $e');
+      setState(() {
+        _profileImageUrl = null;
+      });
     }
   }
 
@@ -92,10 +150,12 @@ class _StoragePageState extends State<StoragePage> {
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {
-        throw Exception('User not authenticated');
+        throw Exception('Please log in to upload images');
       }
 
-      final String fileName = 'profile_${user.id}.jpg';
+      final String fileName = '${user.id}/profile_${user.id}.jpg';
+
+      print('Uploading file: $fileName for user: ${user.id}');
 
       await supabase.storage
           .from('profiles')
@@ -105,20 +165,36 @@ class _StoragePageState extends State<StoragePage> {
             fileOptions: const FileOptions(upsert: true),
           );
 
+      print('Upload successful, getting public URL...');
+
+      // Add a small delay to ensure the file is fully processed
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Get the public URL with a cache-busting timestamp
       final String imageUrl = supabase.storage
           .from('profiles')
           .getPublicUrl(fileName);
+      
+      // Add cache-busting parameter to force reload
+      final String cacheBustedUrl = '$imageUrl?t=${DateTime.now().millisecondsSinceEpoch}';
+
+      print('Image URL: $cacheBustedUrl');
 
       setState(() {
-        _profileImageUrl = imageUrl;
+        _profileImageUrl = cacheBustedUrl;
         _isUploading = false;
       });
+
+      // Reload the image to ensure it displays properly
+      await Future.delayed(const Duration(milliseconds: 200));
+      await _loadProfileImage();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Profile image uploaded successfully!'),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
           ),
         );
       }
@@ -127,11 +203,25 @@ class _StoragePageState extends State<StoragePage> {
         _isUploading = false;
       });
 
+      print('Upload error: $e');
+
+      String errorMessage = 'Upload failed: $e';
+      
+      // Provide more specific error messages
+      if (e.toString().contains('permission') || e.toString().contains('policy')) {
+        errorMessage = 'Permission denied. Please ensure you are logged in and storage policies are configured correctly.';
+      } else if (e.toString().contains('bucket')) {
+        errorMessage = 'Storage bucket not found. Please check your Supabase storage configuration.';
+      } else if (e.toString().contains('network') || e.toString().contains('connection')) {
+        errorMessage = 'Network error. Please check your internet connection.';
+      }
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Upload failed: $e'),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
           ),
         );
       }
@@ -167,7 +257,11 @@ class _StoragePageState extends State<StoragePage> {
                     width: double.infinity,
                     height: double.infinity,
                     fit: BoxFit.cover,
+                    headers: {
+                      'Cache-Control': 'no-cache',
+                    },
                     errorBuilder: (context, error, stackTrace) {
+                      print('Image load error: $error');
                       return _buildPlaceholderAvatar();
                     },
                     loadingBuilder: (context, child, loadingProgress) {
@@ -208,6 +302,56 @@ class _StoragePageState extends State<StoragePage> {
     );
   }
 
+  Widget _buildAuthStatus() {
+    final user = supabase.auth.currentUser;
+    
+    if (user != null) {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.green.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.green.withOpacity(0.3)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.verified_user, color: Colors.green, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Logged in as: ${user.email}',
+                style: const TextStyle(color: Colors.green, fontSize: 14),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 20),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.orange.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.orange.withOpacity(0.3)),
+        ),
+        child: const Row(
+          children: [
+            Icon(Icons.warning, color: Colors.orange, size: 20),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Please log in first to upload images. Go to Authentication page.',
+                style: TextStyle(color: Colors.orange, fontSize: 14),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -222,15 +366,17 @@ class _StoragePageState extends State<StoragePage> {
       ),
       backgroundColor: const Color(0xFF0b1221),
       body: SingleChildScrollView(
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 100),
+              const SizedBox(height: 20),
+              _buildAuthStatus(),
+              const SizedBox(height: 20),
               _buildProfileImageFrame(),
               const SizedBox(height: 40),
               CustomGradientButton(
-                text: 'Upload Image',
+                text: _isUploading ? 'Uploading...' : 'Upload Image',
                 onPressed: _isUploading ? null : _pickAndUploadImage,
               ),
             ],
