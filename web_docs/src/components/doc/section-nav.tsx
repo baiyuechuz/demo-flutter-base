@@ -31,10 +31,8 @@ export function SectionNav({
 		(categories.length === 1 && categories[0] !== "General");
 
 	return (
-		<nav className="sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto p-4 border-r border-border">
-			<h3 className="font-semibold text-sm text-muted-foreground mb-3 uppercase tracking-wide">
-				Sections
-			</h3>
+		<nav className="sticky top-12 h-[calc(100vh-4rem)] overflow-y-auto p-4">
+			<h3 className="font-semibold mb-3 uppercase tracking-wide">Sections</h3>
 
 			{hasCategories ? (
 				// Render sections grouped by category
@@ -42,7 +40,7 @@ export function SectionNav({
 					{categories.map((category) => (
 						<div key={category}>
 							{category !== "General" && (
-								<h4 className="font-medium text-xs text-muted-foreground mb-2 uppercase tracking-wide">
+								<h4 className="font-medium text-xs mb-2 uppercase tracking-wide">
 									{category}
 								</h4>
 							)}
