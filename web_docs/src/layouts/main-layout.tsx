@@ -4,8 +4,8 @@ import { Navbar } from "@/components/navbar";
 export default function MainLayout() {
 	return (
 		<div className="relative">
-			<Outlet />
 			<Navbar />
+			<Outlet />
 		</div>
 	);
 }
