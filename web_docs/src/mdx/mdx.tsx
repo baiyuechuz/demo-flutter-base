@@ -134,20 +134,23 @@ export const mdxComponents = {
 		/>
 	),
 	h3: (props: any) => (
-		<h3 className="text-2xl font-medium my-6 text-foreground" {...props} />
+		<h3
+			className="text-2xl font-medium my-6 text-foreground underline"
+			{...props}
+		/>
 	),
 	h4: (props: any) => (
 		<h4 className="text-xl font-medium my-6 text-foreground" {...props} />
 	),
 	p: (props: any) => (
 		<p
-			className="leading-8 text-left text-lg text-muted-foreground my-2"
+			className="leading-8 text-justify text-lg text-foreground my-2"
 			{...props}
 		/>
 	),
 	ul: (props: any) => (
 		<ul
-			className="list-disc pl-8 text-left text-lg text-muted-foreground"
+			className="list-disc pl-8 text-justify text-lg text-foreground"
 			{...props}
 		/>
 	),
@@ -157,7 +160,7 @@ export const mdxComponents = {
 			{...props}
 		/>
 	),
-	li: (props: any) => <li className="mt-3 leading-8 text-left" {...props} />,
+	li: (props: any) => <li className="mt-3 leading-8 text-justify" {...props} />,
 	a: (props: any) => (
 		<a
 			className="text-primary border-b border-indigo-400 hover:border-b-2 font-medium transition-colors duration-300"
