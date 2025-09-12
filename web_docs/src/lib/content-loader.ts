@@ -107,7 +107,11 @@ export async function discoverContentFiles(): Promise<ContentFile[]> {
 	// Since we can't directly read the filesystem in the browser,
 	// we'll provide a default list but make it easy to extend
 	// Only include files that actually exist in your public/content folder
-	const defaultFiles = ["getting-started.md", "setup_supabase.md"];
+	const defaultFiles = [
+		"getting-started.md",
+		"setup_supabase.md",
+		"setup_firebase.md",
+	];
 
 	const contentFiles: ContentFile[] = [];
 

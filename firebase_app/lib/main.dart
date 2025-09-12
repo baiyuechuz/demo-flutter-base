@@ -5,7 +5,6 @@ import 'components/custom_button.dart';
 import 'pages/authentication.dart';
 import 'pages/database.dart';
 import 'pages/realtime_database.dart';
-import 'pages/storage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
