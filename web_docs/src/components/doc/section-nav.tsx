@@ -54,15 +54,9 @@ export function SectionNav({
 													? "text-green-500 font-medium"
 													: "text-muted-foreground",
 											)}
-											title={section.description}
 										>
 											<div className="flex flex-col">
 												<span>{section.title}</span>
-												{section.description && (
-													<span className="text-xs text-accent-foreground/80 mt-0.5">
-														{section.description}
-													</span>
-												)}
 											</div>
 										</button>
 									</li>
@@ -84,15 +78,9 @@ export function SectionNav({
 										? "bg-accent text-accent-foreground font-medium"
 										: "text-muted-foreground",
 								)}
-								title={section.description}
 							>
 								<div className="flex flex-col">
 									<span>{section.title}</span>
-									{section.description && (
-										<span className="text-xs text-muted-foreground/70 mt-0.5">
-											{section.description}
-										</span>
-									)}
 								</div>
 							</button>
 						</li>

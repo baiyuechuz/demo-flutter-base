@@ -33,11 +33,14 @@ export default function Doc() {
 
 			// Check URL hash for section navigation
 			const urlParams = new URLSearchParams(window.location.search);
-			const sectionParam = urlParams.get('section');
-			
+			const sectionParam = urlParams.get("section");
+
 			// Set the first available file as active if getting-started doesn't exist
 			if (discoveredFiles.length > 0) {
-				if (sectionParam && discoveredFiles.some(file => file.id === sectionParam)) {
+				if (
+					sectionParam &&
+					discoveredFiles.some((file) => file.id === sectionParam)
+				) {
 					setActiveSection(sectionParam);
 				} else {
 					const hasGettingStarted = discoveredFiles.some(
@@ -61,7 +64,7 @@ export default function Doc() {
 			setLoading(true);
 			// Clear TOC items immediately when switching sections
 			setTocItems([]);
-			
+
 			const currentFile = contentFiles.find(
 				(file) => file.id === activeSection,
 			);
@@ -71,11 +74,11 @@ export default function Doc() {
 				// Extract TOC from the new content
 				const newTocItems = extractTOC(newContent);
 				setTocItems(newTocItems);
-				
+
 				// Handle URL hash navigation after content loads
 				setTimeout(() => {
 					const hash = window.location.hash.slice(1);
-					if (hash && newTocItems.some(item => item.id === hash)) {
+					if (hash && newTocItems.some((item) => item.id === hash)) {
 						const element = document.getElementById(hash);
 						if (element) {
 							element.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -93,14 +96,14 @@ export default function Doc() {
 		setActiveSection(sectionId);
 		// Update URL with section parameter and clear hash
 		const url = new URL(window.location.href);
-		url.searchParams.set('section', sectionId);
-		url.hash = '';
+		url.searchParams.set("section", sectionId);
+		url.hash = "";
 		window.history.pushState(null, "", url.toString());
 		setSidebarOpen(false);
-		
+
 		// Scroll to top when switching sections
 		setTimeout(() => {
-			window.scrollTo({ top: 0, behavior: 'smooth' });
+			window.scrollTo({ top: 0, behavior: "smooth" });
 		}, 100);
 	};
 
@@ -136,7 +139,11 @@ export default function Doc() {
 
 	return (
 		<div className="min-h-screen">
-			<Navbar onMenuClick={toggleSidebar} showMenuButton={true} hideBorder={sidebarOpen} />
+			<Navbar
+				onMenuClick={toggleSidebar}
+				showMenuButton={true}
+				hideBorder={sidebarOpen}
+			/>
 
 			<div
 				className="pt-12"

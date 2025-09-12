@@ -1,7 +1,7 @@
 ---
 title: "Setup Firebase For Flutter"
 description: "How to setup Firebase for Flutter"
-order: 1
+order: 7
 category: "firebase"
 ---
 
