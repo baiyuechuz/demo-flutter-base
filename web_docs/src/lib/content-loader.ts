@@ -61,8 +61,21 @@ export async function loadContentWithFrontmatter(
 export function extractTOC(content: string): TOCItem[] {
 	const lines = content.split("\n");
 	const tocItems: TOCItem[] = [];
+	let inCodeBlock = false;
 
 	lines.forEach((line) => {
+		// Check if we're entering or leaving a code block
+		if (line.startsWith("```")) {
+			inCodeBlock = !inCodeBlock;
+			return;
+		}
+
+		// Skip lines inside code blocks
+		if (inCodeBlock) {
+			return;
+		}
+
+		// Only match headings that start at the beginning of the line (not indented)
 		const h1Match = line.match(/^# (.+)$/);
 		const h2Match = line.match(/^## (.+)$/);
 		const h3Match = line.match(/^### (.+)$/);
