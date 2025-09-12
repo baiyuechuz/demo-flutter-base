@@ -45,8 +45,10 @@ export function TableOfContents({
 								"block py-1 text-sm transition-colors hover:text-foreground relative",
 								// Consistent font-weight to prevent width changes
 								"font-medium",
-								item.level === 2 && "pl-2",
+								item.level === 1 && "text-sm",
+								item.level === 2 && "pl-2 text-sm",
 								item.level === 3 && "pl-4 text-xs",
+								item.level === 4 && "pl-6 text-xs",
 								activeHeading === item.id
 									? "text-foreground"
 									: "text-muted-foreground",

@@ -107,12 +107,7 @@ export async function discoverContentFiles(): Promise<ContentFile[]> {
 	// Since we can't directly read the filesystem in the browser,
 	// we'll provide a default list but make it easy to extend
 	// Only include files that actually exist in your public/content folder
-	const defaultFiles = [
-		"getting-started.md",
-		// Add more files here as you create them
-		// "examples.md",
-		// "troubleshooting.md"
-	];
+	const defaultFiles = ["getting-started.md", "setup_supabase.md"];
 
 	const contentFiles: ContentFile[] = [];
 
@@ -120,7 +115,9 @@ export async function discoverContentFiles(): Promise<ContentFile[]> {
 		try {
 			// First check if file exists with a HEAD request
 			const cacheBuster = `?v=${Date.now()}`;
-			const checkResponse = await fetch(`/content/${file}${cacheBuster}`, { method: "HEAD" });
+			const checkResponse = await fetch(`/content/${file}${cacheBuster}`, {
+				method: "HEAD",
+			});
 			if (!checkResponse.ok) {
 				console.warn(
 					`Content file ${file} not found (${checkResponse.status}), skipping`,
@@ -176,4 +173,3 @@ export function generateHeadingId(text: string): string {
 		.replace(/[^a-z0-9]+/g, "-")
 		.replace(/^-|-$/g, "");
 }
-

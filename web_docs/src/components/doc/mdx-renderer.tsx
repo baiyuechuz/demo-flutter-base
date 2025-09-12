@@ -14,24 +14,36 @@ export function MDXRenderer({ content }: MDXRendererProps) {
     
     // Regular expressions for different formatting
     const patterns = [
+      { regex: /\[([^\]]+)\]\(([^)]+)\)/g, component: 'link' }, // Links [text](url) - check first to avoid conflicts
       { regex: /\*\*(.*?)\*\*/g, component: 'strong' }, // Bold
       { regex: /\*(.*?)\*/g, component: 'em' }, // Italic
       { regex: /`(.*?)`/g, component: 'code' }, // Inline code
     ];
     
     // Find all matches and their positions
-    const matches: Array<{ start: number; end: number; content: string; type: string }> = [];
+    const matches: Array<{ start: number; end: number; content: string; url?: string; type: string }> = [];
     
     patterns.forEach(({ regex, component }) => {
       let match;
       const tempRegex = new RegExp(regex.source, regex.flags);
       while ((match = tempRegex.exec(text)) !== null) {
-        matches.push({
-          start: match.index,
-          end: match.index + match[0].length,
-          content: match[1],
-          type: component
-        });
+        if (component === 'link') {
+          // For links, match[1] is text, match[2] is URL
+          matches.push({
+            start: match.index,
+            end: match.index + match[0].length,
+            content: match[1],
+            url: match[2],
+            type: component
+          });
+        } else {
+          matches.push({
+            start: match.index,
+            end: match.index + match[0].length,
+            content: match[1],
+            type: component
+          });
+        }
       }
     });
     
@@ -57,7 +69,13 @@ export function MDXRenderer({ content }: MDXRendererProps) {
       }
       
       // Add the formatted content
-      if (match.type === 'strong') {
+      if (match.type === 'link') {
+        parts.push(
+          <mdxComponents.a key={partIndex++} href={match.url}>
+            {match.content}
+          </mdxComponents.a>
+        );
+      } else if (match.type === 'strong') {
         parts.push(<strong key={partIndex++}>{match.content}</strong>);
       } else if (match.type === 'em') {
         parts.push(<em key={partIndex++}>{match.content}</em>);

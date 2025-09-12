@@ -31,13 +31,21 @@ export default function Doc() {
 			const discoveredFiles = await discoverContentFiles();
 			setContentFiles(discoveredFiles);
 
+			// Check URL hash for section navigation
+			const urlParams = new URLSearchParams(window.location.search);
+			const sectionParam = urlParams.get('section');
+			
 			// Set the first available file as active if getting-started doesn't exist
 			if (discoveredFiles.length > 0) {
-				const hasGettingStarted = discoveredFiles.some(
-					(file) => file.id === "getting-started",
-				);
-				if (!hasGettingStarted) {
-					setActiveSection(discoveredFiles[0].id);
+				if (sectionParam && discoveredFiles.some(file => file.id === sectionParam)) {
+					setActiveSection(sectionParam);
+				} else {
+					const hasGettingStarted = discoveredFiles.some(
+						(file) => file.id === "getting-started",
+					);
+					if (!hasGettingStarted) {
+						setActiveSection(discoveredFiles[0].id);
+					}
 				}
 			}
 			setInitializing(false);
@@ -51,13 +59,29 @@ export default function Doc() {
 
 		const loadSectionContent = async () => {
 			setLoading(true);
+			// Clear TOC items immediately when switching sections
+			setTocItems([]);
+			
 			const currentFile = contentFiles.find(
 				(file) => file.id === activeSection,
 			);
 			if (currentFile) {
 				const newContent = await loadContent(currentFile.file);
 				setContent(newContent);
-				setTocItems(extractTOC(newContent));
+				// Extract TOC from the new content
+				const newTocItems = extractTOC(newContent);
+				setTocItems(newTocItems);
+				
+				// Handle URL hash navigation after content loads
+				setTimeout(() => {
+					const hash = window.location.hash.slice(1);
+					if (hash && newTocItems.some(item => item.id === hash)) {
+						const element = document.getElementById(hash);
+						if (element) {
+							element.scrollIntoView({ behavior: "smooth", block: "start" });
+						}
+					}
+				}, 100);
 			}
 			setLoading(false);
 		};
@@ -67,8 +91,17 @@ export default function Doc() {
 
 	const handleSectionChange = (sectionId: string) => {
 		setActiveSection(sectionId);
-		window.history.pushState(null, "", window.location.pathname);
+		// Update URL with section parameter and clear hash
+		const url = new URL(window.location.href);
+		url.searchParams.set('section', sectionId);
+		url.hash = '';
+		window.history.pushState(null, "", url.toString());
 		setSidebarOpen(false);
+		
+		// Scroll to top when switching sections
+		setTimeout(() => {
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		}, 100);
 	};
 
 	const toggleSidebar = () => {
