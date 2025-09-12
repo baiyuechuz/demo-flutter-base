@@ -20,7 +20,9 @@ export interface TOCItem {
 // Function to load content from public/content folder
 export async function loadContent(filename: string): Promise<string> {
 	try {
-		const response = await fetch(`/content/${filename}`);
+		// Add cache busting parameter to force reload
+		const cacheBuster = `?v=${Date.now()}`;
+		const response = await fetch(`/content/${filename}${cacheBuster}`);
 		if (!response.ok) {
 			throw new Error(`Failed to load ${filename}`);
 		}
@@ -38,7 +40,9 @@ export async function loadContentWithFrontmatter(
 	filename: string,
 ): Promise<{ content: string; frontmatter: FrontmatterData }> {
 	try {
-		const response = await fetch(`/content/${filename}`);
+		// Add cache busting parameter to force reload
+		const cacheBuster = `?v=${Date.now()}`;
+		const response = await fetch(`/content/${filename}${cacheBuster}`);
 		if (!response.ok) {
 			throw new Error(`Failed to load ${filename}`);
 		}
@@ -115,7 +119,8 @@ export async function discoverContentFiles(): Promise<ContentFile[]> {
 	for (const file of defaultFiles) {
 		try {
 			// First check if file exists with a HEAD request
-			const checkResponse = await fetch(`/content/${file}`, { method: "HEAD" });
+			const cacheBuster = `?v=${Date.now()}`;
+			const checkResponse = await fetch(`/content/${file}${cacheBuster}`, { method: "HEAD" });
 			if (!checkResponse.ok) {
 				console.warn(
 					`Content file ${file} not found (${checkResponse.status}), skipping`,

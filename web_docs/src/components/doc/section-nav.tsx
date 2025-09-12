@@ -12,7 +12,6 @@ export function SectionNav({
 	activeSection,
 	onSectionChange,
 }: SectionNavProps) {
-	// Group sections by category if available
 	const groupedSections = sections.reduce(
 		(acc, section) => {
 			const category = section.category || "General";

@@ -2,7 +2,7 @@
 title: "Getting Started"
 description: "Introduction to Supabase and Firebase"
 order: 1
-category: "basics"
+category: "intro"
 ---
 
 # Getting Started
