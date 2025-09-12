@@ -75,16 +75,6 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             CustomGradientButton(
-              text: "Storage",
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const StoragePage()),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            CustomGradientButton(
               text: "Authentication",
               onPressed: () {
                 Navigator.push(

@@ -50,7 +50,7 @@ export function SectionNav({
 										<button
 											onClick={() => onSectionChange(section.id)}
 											className={cn(
-												"w-full text-left block px-2 py-1 text-sm rounded-md transition-colors  hover:text-green-500",
+												"w-full text-left block py-1 text-sm rounded-md transition-colors  hover:text-green-500",
 												activeSection === section.id
 													? "text-green-500 font-medium"
 													: "text-muted-foreground",
@@ -103,4 +103,3 @@ export function SectionNav({
 		</nav>
 	);
 }
-
