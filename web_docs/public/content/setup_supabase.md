@@ -1,35 +1,35 @@
 ---
-title: "Setup Supabase For Flutter"
-description: "How to setup Supabase for Flutter"
+title: "Cài đặt Supabase cho Flutter"
+description: "Hướng dẫn cài đặt Supabase cho Flutter"
 order: 1
 category: "supabase"
 ---
 
-# Setup Supabase For Flutter
+# Cài đặt Supabase cho Flutter
 
-- Go to [supabase.com](https://supabase.com) and create a new project.
-- Create a new project or select an existing one.
-- Click button 'Connect' and get url and anon/public key.
-- Install supabase flutter package.
+- Truy cập [supabase.com](https://supabase.com) và tạo một dự án mới.
+- Tạo một dự án mới hoặc chọn một dự án đã có.
+- Nhấn nút 'Connect' và lấy url cùng anon/public key.
+- Cài đặt gói supabase flutter.
 
 ```bash
 flutter pub add supabase_flutter
 ```
 
-- Add dotenv package to no push data to git.
+- Thêm gói dotenv để không đẩy dữ liệu lên git.
 
 ```bash
 flutter pub add dotenv
 ```
 
-- Create a .env file in root directory and add your supabase url and anon/public key.
+- Tạo file .env trong thư mục gốc và thêm url supabase cùng anon/public key của bạn.
 
 ```bash
 SUPABASE_URL=https://your-project-ref.supabase.co
 SUPABASE_ANON_KEY=your_actual_anon_key
 ```
 
-- Add .env to assets in pubspec.yaml.
+- Thêm .env vào assets trong pubspec.yaml.
 
 ```yaml
 flutter:
@@ -37,7 +37,7 @@ flutter:
     - .env
 ```
 
-- Write code to config supabase in main.dart.
+- Viết code để cấu hình supabase trong main.dart.
 
 ```dart
 import 'package:flutter/material.dart';

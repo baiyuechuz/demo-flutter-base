@@ -1,34 +1,34 @@
 ---
-title: "Setup Firebase For Flutter"
-description: "How to setup Firebase for Flutter"
+title: "Cài đặt Firebase cho Flutter"
+description: "Hướng dẫn cài đặt Firebase cho Flutter"
 order: 7
 category: "firebase"
 ---
 
-# Setup Firebase For Flutter
+# Cài đặt Firebase cho Flutter
 
-- Go to [firebase.google.com](https://firebase.google.com) and create a new project.
-- Install firebase cli [manual](https://firebase.google.com/docs/cli)
-- Login to firebase cli
+- Truy cập [firebase.google.com](https://firebase.google.com) và tạo một dự án mới.
+- Cài đặt firebase cli [hướng dẫn](https://firebase.google.com/docs/cli)
+- Đăng nhập vào firebase cli
 
 ```bash
 firebase login
 ```
 
-- Create a app flutter
+- Tạo một ứng dụng flutter
 
 ```bash
 flutter create your_app_name
 ```
 
-- Install firebase flutter package
+- Cài đặt gói firebase flutter
 
 ```bash
 cd your_app_name
 flutter pub add firebase_core
 ```
 
-- Add this following code to your main.dart
+- Thêm đoạn code sau vào main.dart của bạn
 
 ```dart
 import 'package:flutter/material.dart';
@@ -79,7 +79,7 @@ class HomePage extends StatelessWidget {
 }
 ```
 
-- Use flutterfire to manage my firebase data
+- Sử dụng flutterfire để quản lý dữ liệu firebase
 
 ```bash
 # Install the CLI if not already done so
@@ -89,4 +89,4 @@ dart pub global activate flutterfire_cli
 flutterfire configure
 ```
 
-A firebase_options.dart file will be generated for you containing all the options required for initialization.
+Một file firebase_options.dart sẽ được tạo cho bạn chứa tất cả các tùy chọn cần thiết để khởi tạo.
