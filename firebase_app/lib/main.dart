@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'components/custom_button.dart';
-import 'pages/authentication.dart';
 import 'pages/database.dart';
 import 'pages/realtime_database.dart';
 
@@ -68,18 +67,6 @@ class HomePage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const RealtimeDatabasePage(),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            CustomGradientButton(
-              text: "Authentication",
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AuthenticationPage(),
                   ),
                 );
               },
