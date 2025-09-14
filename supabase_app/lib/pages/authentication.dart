@@ -139,6 +139,30 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     _passwordController.clear();
   }
 
+  Future<void> _signInWithGoogle() async {
+    // TODO: Implement Google sign-in logic
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Google sign-in not implemented yet'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    }
+  }
+
+  Future<void> _signInWithGitHub() async {
+    // TODO: Implement GitHub sign-in logic
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('GitHub sign-in not implemented yet'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    }
+  }
+
   Widget _buildAuthForm() {
     return Column(
       children: [
@@ -192,12 +216,68 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
             _clearFields();
           },
           child: Text(
-            _isSignUp 
+            _isSignUp
                 ? 'Already have an account? Sign In'
                 : 'Don\'t have an account? Sign Up',
             style: const TextStyle(color: Color(0xFF667eea)),
           ),
         ),
+        if (!_isSignUp) ...[
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(child: Divider(color: Colors.white.withOpacity(0.3))),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Or continue with',
+                  style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                ),
+              ),
+              Expanded(child: Divider(color: Colors.white.withOpacity(0.3))),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 50,
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading ? null : _signInWithGoogle,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black87,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    icon: Icon(Icons.g_mobiledata, size: 24),
+                    label: const Text('Google', style: TextStyle(fontSize: 14)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Container(
+                  height: 50,
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading ? null : _signInWithGitHub,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF24292e),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    icon: Icon(Icons.code, size: 20),
+                    label: const Text('GitHub', style: TextStyle(fontSize: 14)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }
