@@ -59,8 +59,7 @@ A Flutter application integrated with Supabase, featuring:
 
 For detailed setup instructions, see:
 
-- [Firebase App Setup](firebase_app/SETUP.md)
-- [Supabase App Setup](supabase_app/SETUP.md)
+- [Setup Docs]()
 
 ## CI/CD Pipeline
 

@@ -1,1 +1,11 @@
 supabase/
+
+# Firebase sensitive configuration files
+**/google-services.json
+**/GoogleService-Info.plist
+**/firebase_options.dart
+firebase_app/firebase.json
+STORAGE_SETUP.md
+STORAGE_QUICK_FIX.md
+AUTHENTICATION_SETUP.md
+**claude

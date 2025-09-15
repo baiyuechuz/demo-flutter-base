@@ -46,3 +46,9 @@ app.*.map.json
 
 # Environment variables
 .env
+
+# Firebase configuration files (contain sensitive API keys)
+google-services.json
+GoogleService-Info.plist
+firebase_options.dart
+firebase.json
