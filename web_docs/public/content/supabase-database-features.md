@@ -89,7 +89,7 @@ INSERT INTO realtime_data (key, value) VALUES
 ```dart
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:supabase_app/components/custom_button.dart';
+import '../components/custom_button.dart';
 
 class DatabasePage extends StatefulWidget {
   const DatabasePage({super.key});
@@ -99,73 +99,64 @@ class DatabasePage extends StatefulWidget {
 }
 
 class _DatabasePageState extends State<DatabasePage> {
-  final SupabaseClient supabase = Supabase.instance.client;
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final supabase = Supabase.instance.client;
+
   List<Map<String, dynamic>> _notes = [];
   bool _isLoading = false;
-  String? _editingNoteId;
+  bool _isSubmitting = false;
+  int? _editingId;
 ```
 
 **Giải thích quản lý trạng thái:**
-- `SupabaseClient`: Client đơn lẻ được khởi tạo trong main.dart
-- `TextEditingController`: Quản lý các trường nhập liệu cho tiêu đề và mô tả
+- `supabase`: Client Supabase được khởi tạo với type inference
+- `_titleController`, `_descriptionController`: Quản lý các trường nhập liệu
+- `_formKey`: GlobalKey để quản lý và validate form
 - `List<Map<String, dynamic>> _notes`: Lưu trữ danh sách ghi chú từ cơ sở dữ liệu
-- `_editingNoteId`: Theo dõi ghi chú đang được chỉnh sửa (nullable để linh hoạt)
+- `_isLoading`: Trạng thái tải khi fetch dữ liệu
+- `_isSubmitting`: Trạng thái đang gửi khi thực hiện thao tác CRUD
+- `_editingId`: ID của ghi chú đang được chỉnh sửa (int, nullable)
 
 ### 2. Create Operation - Thêm Note Mới
 
 ```dart
 Future<void> _addNote() async {
-  if (_titleController.text.trim().isEmpty) {
-    _showMessage('Please enter a title');
-    return;
-  }
+  if (!_formKey.currentState!.validate()) return;
 
-  setState(() {
-    _isLoading = true;
-  });
-
+  setState(() => _isSubmitting = true);
   try {
-    final response = await supabase.from('notes').insert({
+    await supabase.from('notes').insert({
       'title': _titleController.text.trim(),
       'description': _descriptionController.text.trim(),
       'created_at': DateTime.now().toIso8601String(),
-      'updated_at': DateTime.now().toIso8601String(),
-    }).select();
-
-    if (response.isNotEmpty) {
-      _showMessage('Note added successfully!');
-      _clearControllers();
-      await _fetchNotes();
-    }
-  } catch (e) {
-    _showMessage('Error adding note: $e');
-  } finally {
-    setState(() {
-      _isLoading = false;
     });
+
+    _clearForm();
+    _showSnackBar('Note added successfully!', Colors.green);
+    _fetchNotes();
+  } catch (error) {
+    _showSnackBar('Error adding note: $error', Colors.red);
+  } finally {
+    setState(() => _isSubmitting = false);
   }
 }
 ```
 
 **Giải thích triển khai:**
-- **Xác thực**: Kiểm tra tiêu đề không rỗng trước khi thực hiện
-- **Trạng thái tải**: Đặt `_isLoading = true` để vô hiệu hóa giao diện và hiển thị đang tải
-- **Thao tác chèn**: `supabase.from('notes').insert()` - SQL INSERT được bao bọc trong Dart API
-- **Chuỗi select**: `.select()` trả về dữ liệu vừa chèn để xác minh thành công
-- **Xử lý lỗi**: Try-catch toàn diện với thông báo thân thiện người dùng
-- **Cập nhật trạng thái**: Làm mới danh sách và xóa form sau khi thành công
+- **Xác thực form**: Sử dụng `_formKey.currentState!.validate()` để validate form theo Flutter best practices
+- **Trạng thái gửi**: Đặt `_isSubmitting = true` để vô hiệu hóa nút và hiển thị đang xử lý
+- **Thao tác chèn**: `supabase.from('notes').insert()` - không cần `.select()` vì không cần response data
+- **Timestamp**: Chỉ set `created_at`, không set `updated_at` cho record mới
+- **Xử lý lỗi**: Try-catch với `_showSnackBar()` có màu sắc (đỏ cho lỗi, xanh cho thành công)
+- **Cleanup**: Gọi `_clearForm()` để reset form và `_fetchNotes()` để refresh danh sách
 
 ### 3. Read Operation - Lấy Danh Sách Notes
 
 ```dart
 Future<void> _fetchNotes() async {
-  setState(() {
-    _isLoading = true;
-  });
-
+  setState(() => _isLoading = true);
   try {
     final response = await supabase
         .from('notes')
@@ -175,128 +166,125 @@ Future<void> _fetchNotes() async {
     setState(() {
       _notes = List<Map<String, dynamic>>.from(response);
     });
-  } catch (e) {
-    _showMessage('Error fetching notes: $e');
+  } catch (error) {
+    if (mounted) {
+      _showSnackBar('Error fetching notes: $error', Colors.red);
+    }
   } finally {
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 }
 ```
 
 **Giải thích truy vấn:**
+- **Arrow function**: `setState(() => _isLoading = true)` - syntax ngắn gọn hơn
 - `select()`: Lấy tất cả cột (tương đương với SELECT * trong SQL)
 - `order('created_at', ascending: false)`: ORDER BY created_at DESC
+- **Mounted check**: Kiểm tra `if (mounted)` trước khi show snackbar để tránh lỗi khi widget đã dispose
+- **Consistent error handling**: Sử dụng `catch (error)` và `_showSnackBar()` với màu đỏ
 - Ép kiểu: `List<Map<String, dynamic>>.from(response)` đảm bảo an toàn kiểu dữ liệu
 
 ### 4. Update Operation - Cập Nhật Note
 
 ```dart
 Future<void> _updateNote() async {
-  if (_editingNoteId == null || _titleController.text.trim().isEmpty) {
-    _showMessage('Invalid data for update');
-    return;
-  }
+  if (!_formKey.currentState!.validate() || _editingId == null) return;
 
-  setState(() {
-    _isLoading = true;
-  });
-
+  setState(() => _isSubmitting = true);
   try {
-    final response = await supabase
+    await supabase
         .from('notes')
         .update({
           'title': _titleController.text.trim(),
           'description': _descriptionController.text.trim(),
           'updated_at': DateTime.now().toIso8601String(),
         })
-        .eq('id', _editingNoteId!)
-        .select();
+        .eq('id', _editingId!);
 
-    if (response.isNotEmpty) {
-      _showMessage('Note updated successfully!');
-      _clearControllers();
-      setState(() {
-        _editingNoteId = null;
-      });
-      await _fetchNotes();
-    }
-  } catch (e) {
-    _showMessage('Error updating note: $e');
+    _clearForm();
+    _showSnackBar('Note updated successfully!', Colors.green);
+    _fetchNotes();
+  } catch (error) {
+    _showSnackBar('Error updating note: $error', Colors.red);
   } finally {
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isSubmitting = false);
   }
 }
 ```
 
 **Giải thích logic cập nhật:**
-- **Xác thực kép**: Kiểm tra cả `_editingNoteId` và tiêu đề
-- **Thao tác cập nhật**: `update()` tương đương với SQL UPDATE
-- **Mệnh đề where**: `.eq('id', _editingNoteId!)` tương đương WHERE id = ?
+- **Xác thực form và ID**: Kiểm tra cả form validation và `_editingId` không null
+- **Trạng thái gửi**: Sử dụng `_isSubmitting` thay vì `_isLoading` cho thao tác gửi dữ liệu
+- **Thao tác cập nhật**: `update()` tương đương với SQL UPDATE, không cần `.select()`
+- **Mệnh đề where**: `.eq('id', _editingId!)` sử dụng `_editingId` (int) thay vì `_editingNoteId` (string)
 - **Xử lý dấu thời gian**: Chỉ cập nhật `updated_at`, giữ nguyên `created_at`
-- **Đặt lại trạng thái**: Xóa trạng thái chỉnh sửa sau khi hoàn thành
+- **Cleanup tích hợp**: `_clearForm()` đã bao gồm việc reset `_editingId = null`
 
 ### 5. Delete Operation - Xóa Note
 
 ```dart
-Future<void> _deleteNote(String noteId) async {
-  // Show confirmation dialog
-  bool? confirmed = await showDialog<bool>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        backgroundColor: Colors.grey[900],
-        title: const Text(
-          'Confirm Delete',
-          style: TextStyle(color: Colors.white),
-        ),
-        content: const Text(
-          'Are you sure you want to delete this note?',
-          style: TextStyle(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      );
-    },
-  );
-
-  if (confirmed != true) return;
-
-  setState(() {
-    _isLoading = true;
-  });
+Future<void> _deleteNote(int id) async {
+  final confirmed = await _showDeleteConfirmation();
+  if (!confirmed) return;
 
   try {
-    await supabase.from('notes').delete().eq('id', noteId);
-    
-    _showMessage('Note deleted successfully!');
-    await _fetchNotes();
-  } catch (e) {
-    _showMessage('Error deleting note: $e');
-  } finally {
-    setState(() {
-      _isLoading = false;
-    });
+    await supabase.from('notes').delete().eq('id', id);
+    _showSnackBar('Note deleted successfully!', Colors.green);
+    _fetchNotes();
+  } catch (error) {
+    _showSnackBar('Error deleting note: $error', Colors.red);
   }
+}
+
+Future<bool> _showDeleteConfirmation() async {
+  return await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: const Color(0xFF1f2937),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Text(
+            'Delete Note',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const Text(
+            'Are you sure you want to delete this note? This action cannot be undone.',
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white70),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        ),
+      ) ??
+      false;
 }
 ```
 
 **Giải thích quy trình xóa:**
-- **Hộp thoại xác nhận**: Thực hành UX tốt nhất để tránh xóa nhầm
-- **Xác nhận bất đồng bộ**: Sử dụng `showDialog<bool>` để lấy lựa chọn của người dùng
-- **Thực thi có điều kiện**: Chỉ thực hiện khi người dùng xác nhận
-- **Thao tác xóa**: `delete().eq('id', noteId)` - SQL DELETE với mệnh đề WHERE
+- **Parameter type**: `int id` thay vì `String noteId` để match với database
+- **Extracted dialog**: `_showDeleteConfirmation()` là method riêng để tái sử dụng
+- **Styled dialog**: Custom styling với màu `Color(0xFF1f2937)` và border radius
+- **Enhanced content**: Thêm warning "This action cannot be undone"
+- **Null safety**: `?? false` để handle null case từ dialog
+- **No loading state**: Không cần loading state cho delete operation
+- **Consistent error handling**: Sử dụng `_showSnackBar()` với màu sắc phù hợp
 
 ## Giao Diện Người Dùng
 
@@ -559,43 +547,33 @@ Widget _buildNotesList() {
 ```dart
 void _editNote(Map<String, dynamic> note) {
   setState(() {
-    _editingNoteId = note['id'].toString();
+    _editingId = note['id'];
     _titleController.text = note['title'] ?? '';
     _descriptionController.text = note['description'] ?? '';
   });
 }
 
-void _cancelEdit() {
+void _clearForm() {
   setState(() {
-    _editingNoteId = null;
+    _editingId = null;
+    _titleController.clear();
+    _descriptionController.clear();
   });
-  _clearControllers();
 }
 
-void _clearControllers() {
-  _titleController.clear();
-  _descriptionController.clear();
-}
-
-String _formatDateTime(String? dateTimeString) {
-  if (dateTimeString == null) return 'N/A';
-  
-  try {
-    final dateTime = DateTime.parse(dateTimeString);
-    return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
-  } catch (e) {
-    return 'Invalid date';
+void _showSnackBar(String message, Color color) {
+  if (mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
   }
-}
-
-void _showMessage(String message) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.blue,
-      behavior: SnackBarBehavior.floating,
-    ),
-  );
 }
 ```
 
@@ -605,13 +583,18 @@ void _showMessage(String message) {
 - `_formatDateTime()`: Format timestamp thành human-readable
 - `_showMessage()`: Consistent user feedback mechanism
 
+**Giải thích utilities:**
+- `_editNote()`: Load data vào form để edit, sử dụng `_editingId` (int) thay vì convert sang string
+- `_clearForm()`: Tích hợp reset `_editingId`, clear controllers trong một method
+- `_showSnackBar()`: Enhanced với color parameter, mounted check, và custom styling
+
 ### 2. Lifecycle Management
 
 ```dart
 @override
 void initState() {
   super.initState();
-  _fetchNotes(); // Load initial data
+  _fetchNotes();
 }
 
 @override
@@ -623,7 +606,7 @@ void dispose() {
 ```
 
 **Giải thích lifecycle:**
-- `initState()`: Load data ngay khi page được khởi tạo
+- `initState()`: Gọi `_fetchNotes()` ngay khi page được khởi tạo để load dữ liệu ban đầu
 - `dispose()`: Clean up controllers để tránh memory leaks
 
 ## Tính Năng Nâng Cao
