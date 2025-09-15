@@ -1,0 +1,4 @@
+- [ ] fix scroll toc fot below content
+- [ ] fix some mix lang
+- [ ] fix some typo
+- [ ] add gg, github, facebook logic auth
