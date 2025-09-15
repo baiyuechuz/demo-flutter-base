@@ -9,11 +9,11 @@ category: "supabase"
 
 ## Tổng quan
 
-Dự án này triển khai một hệ thống database hoàn chỉnh sử dụng Supabase PostgreSQL với đầy đủ các tính năng CRUD, Row Level Security (RLS), và real-time subscriptions. Tất cả code được lấy từ implementation thực tế trong project.
+Dự án này triển khai một hệ thống cơ sở dữ liệu hoàn chỉnh sử dụng Supabase PostgreSQL với đầy đủ các tính năng CRUD, Bảo mật Cấp Hàng (RLS), và đăng ký thời gian thực. Tất cả mã được lấy từ triển khai thực tế trong dự án.
 
-## Cấu trúc Database
+## Cấu Trúc Cơ Sở Dữ Liệu
 
-### 1. Bảng Notes (notes_table.sql)
+### 1. Bảng Ghi Chú (notes_table.sql)
 
 ```sql
 -- Create the notes table for Supabase CRUD Demo
@@ -45,7 +45,7 @@ CREATE INDEX idx_notes_created_at ON notes(created_at DESC);
 - `ROW LEVEL SECURITY`: Bảo mật cấp hàng của PostgreSQL
 - `CREATE INDEX`: Tối ưu hiệu suất cho việc sắp xếp theo thời gian
 
-### 2. Bảng Realtime Data (realtime_data_table.sql)
+### 2. Bảng Dữ Liệu Thời Gian Thực (realtime_data_table.sql)
 
 ```sql
 -- Create the realtime_data table for Supabase Real-time Get/Set Demo
@@ -82,9 +82,9 @@ INSERT INTO realtime_data (key, value) VALUES
 - `ALTER PUBLICATION supabase_realtime`: Kích hoạt tính năng đồng bộ thời gian thực cho bảng này
 - Dữ liệu mẫu: Cung cấp dữ liệu demo ngay từ đầu
 
-## Implementation Flutter
+## Triển Khai Flutter
 
-### 1. Khởi tạo và State Management
+### 1. Khởi Tạo và Quản Lý Trạng Thái
 
 ```dart
 import 'package:flutter/material.dart';
@@ -111,15 +111,15 @@ class _DatabasePageState extends State<DatabasePage> {
 ```
 
 **Giải thích quản lý trạng thái:**
-- `supabase`: Client Supabase được khởi tạo với type inference
+- `supabase`: Client Supabase được khởi tạo với suy luận kiểu
 - `_titleController`, `_descriptionController`: Quản lý các trường nhập liệu
-- `_formKey`: GlobalKey để quản lý và validate form
+- `_formKey`: Khóa toàn cục để quản lý và xác thực biểu mẫu
 - `List<Map<String, dynamic>> _notes`: Lưu trữ danh sách ghi chú từ cơ sở dữ liệu
-- `_isLoading`: Trạng thái tải khi fetch dữ liệu
+- `_isLoading`: Trạng thái tải khi lấy dữ liệu
 - `_isSubmitting`: Trạng thái đang gửi khi thực hiện thao tác CRUD
-- `_editingId`: ID của ghi chú đang được chỉnh sửa (int, nullable)
+- `_editingId`: ID của ghi chú đang được chỉnh sửa (int, có thể null)
 
-### 2. Create Operation - Thêm Note Mới
+### 2. Thao Tác Tạo - Thêm Ghi Chú Mới
 
 ```dart
 Future<void> _addNote() async {
@@ -145,14 +145,14 @@ Future<void> _addNote() async {
 ```
 
 **Giải thích triển khai:**
-- **Xác thực form**: Sử dụng `_formKey.currentState!.validate()` để validate form theo Flutter best practices
+- **Xác thực biểu mẫu**: Sử dụng `_formKey.currentState!.validate()` để xác thực biểu mẫu theo thực hành tốt nhất của Flutter
 - **Trạng thái gửi**: Đặt `_isSubmitting = true` để vô hiệu hóa nút và hiển thị đang xử lý
-- **Thao tác chèn**: `supabase.from('notes').insert()` - không cần `.select()` vì không cần response data
-- **Timestamp**: Chỉ set `created_at`, không set `updated_at` cho record mới
+- **Thao tác chèn**: `supabase.from('notes').insert()` - không cần `.select()` vì không cần dữ liệu phản hồi
+- **Dấu thời gian**: Chỉ đặt `created_at`, không đặt `updated_at` cho bản ghi mới
 - **Xử lý lỗi**: Try-catch với `_showSnackBar()` có màu sắc (đỏ cho lỗi, xanh cho thành công)
-- **Cleanup**: Gọi `_clearForm()` để reset form và `_fetchNotes()` để refresh danh sách
+- **Dọn dẹp**: Gọi `_clearForm()` để reset biểu mẫu và `_fetchNotes()` để làm mới danh sách
 
-### 3. Read Operation - Lấy Danh Sách Notes
+### 3. Thao Tác Đọc - Lấy Danh Sách Ghi Chú
 
 ```dart
 Future<void> _fetchNotes() async {
@@ -177,14 +177,14 @@ Future<void> _fetchNotes() async {
 ```
 
 **Giải thích truy vấn:**
-- **Arrow function**: `setState(() => _isLoading = true)` - syntax ngắn gọn hơn
+- **Hàm mũi tên**: `setState(() => _isLoading = true)` - cú pháp ngắn gọn hơn
 - `select()`: Lấy tất cả cột (tương đương với SELECT * trong SQL)
 - `order('created_at', ascending: false)`: ORDER BY created_at DESC
-- **Mounted check**: Kiểm tra `if (mounted)` trước khi show snackbar để tránh lỗi khi widget đã dispose
-- **Consistent error handling**: Sử dụng `catch (error)` và `_showSnackBar()` với màu đỏ
+- **Kiểm tra đã gắn kết**: Kiểm tra `if (mounted)` trước khi hiển thị snackbar để tránh lỗi khi widget đã giải phóng
+- **Xử lý lỗi nhất quán**: Sử dụng `catch (error)` và `_showSnackBar()` với màu đỏ
 - Ép kiểu: `List<Map<String, dynamic>>.from(response)` đảm bảo an toàn kiểu dữ liệu
 
-### 4. Update Operation - Cập Nhật Note
+### 4. Thao Tác Cập Nhật - Cập Nhật Ghi Chú
 
 ```dart
 Future<void> _updateNote() async {
@@ -213,14 +213,14 @@ Future<void> _updateNote() async {
 ```
 
 **Giải thích logic cập nhật:**
-- **Xác thực form và ID**: Kiểm tra cả form validation và `_editingId` không null
+- **Xác thực biểu mẫu và ID**: Kiểm tra cả xác thực biểu mẫu và `_editingId` không phải null
 - **Trạng thái gửi**: Sử dụng `_isSubmitting` thay vì `_isLoading` cho thao tác gửi dữ liệu
-- **Thao tác cập nhật**: `update()` tương đương với SQL UPDATE, không cần `.select()`
-- **Mệnh đề where**: `.eq('id', _editingId!)` sử dụng `_editingId` (int) thay vì `_editingNoteId` (string)
+- **Thao tác cập nhật**: `update()` tương đương với Cập nhật SQL, không cần `.select()`
+- **Mệnh đề điều kiện**: `.eq('id', _editingId!)` sử dụng `_editingId` (int) thay vì `_editingNoteId` (string)
 - **Xử lý dấu thời gian**: Chỉ cập nhật `updated_at`, giữ nguyên `created_at`
-- **Cleanup tích hợp**: `_clearForm()` đã bao gồm việc reset `_editingId = null`
+- **Dọn dẹp tích hợp**: `_clearForm()` đã bao gồm việc reset `_editingId = null`
 
-### 5. Delete Operation - Xóa Note
+### 5. Thao Tác Xóa - Xóa Ghi Chú
 
 ```dart
 Future<void> _deleteNote(int id) async {
@@ -288,7 +288,7 @@ Future<bool> _showDeleteConfirmation() async {
 
 ## Giao Diện Người Dùng
 
-### 1. Form Nhập Liệu
+### 1. Biểu Mẫu Nhập Liệu
 
 ```dart
 Widget _buildNoteForm() {
@@ -406,7 +406,7 @@ Widget _buildNoteForm() {
 - **Nút có điều kiện**: Nút hủy chỉ hiện khi đang chỉnh sửa
 - **Trạng thái tải**: Vô hiệu hóa nút khi đang tải
 
-### 2. Danh Sách Notes
+### 2. Danh Sách Ghi Chú
 
 ```dart
 Widget _buildNotesList() {

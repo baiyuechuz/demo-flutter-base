@@ -9,11 +9,11 @@ category: "supabase"
 
 ## Tổng quan
 
-Dự án này triển khai một hệ thống storage hoàn chỉnh sử dụng Supabase Storage với tích hợp PostgreSQL và Row Level Security (RLS). Hệ thống hỗ trợ upload, download, delete files với bảo mật cao và tối ưu performance.
+Dự án này triển khai một hệ thống lưu trữ hoàn chỉnh sử dụng Supabase Storage với tích hợp PostgreSQL và Bảo mật Cấp Hàng (RLS). Hệ thống hỗ trợ tải lên, tải xuống, xóa tập tin với bảo mật cao và tối ưu hiệu suất.
 
-## Cấu trúc Storage Setup
+## Cấu Trúc Thiết Lập Lưu Trữ
 
-### 1. Storage Bucket Configuration (storage_setup.sql)
+### 1. Cấu Hình Bucket Lưu Trữ (storage_setup.sql)
 
 ```sql
 -- Storage Setup for Supabase Image Upload
@@ -59,17 +59,17 @@ CREATE POLICY "Users can delete their own profile images" ON storage.objects
   );
 ```
 
-**Giải thích Storage Configuration:**
-- `storage.buckets`: Tạo bucket 'profiles' với public access
-- `public: true`: Files có thể được truy cập thông qua public URL
+**Giải thích Cấu Hình Lưu Trữ:**
+- `storage.buckets`: Tạo bucket 'profiles' với truy cập công khai
+- `public: true`: Tập tin có thể được truy cập thông qua URL công khai
 - `ON CONFLICT DO NOTHING`: Tránh lỗi khi bucket đã tồn tại
-- **RLS Policies**: Kiểm soát chi tiết quyền truy cập files
-- `auth.uid()`: User ID hiện tại từ authentication
-- `storage.foldername(name)`: Extract folder từ file path để check ownership
+- **Chính sách RLS**: Kiểm soát chi tiết quyền truy cập tập tin
+- `auth.uid()`: ID người dùng hiện tại từ xác thực
+- `storage.foldername(name)`: Trích xuất thư mục từ đường dẫn tập tin để kiểm tra quyền sở hữu
 
-## Implementation Flutter
+## Triển Khai Flutter
 
-### 1. Khởi tạo và Dependencies
+### 1. Khởi Tạo và Thư Viện Phụ Thuộc
 
 ```dart
 import 'dart:io';
@@ -96,13 +96,13 @@ class _StoragePageState extends State<StoragePage> {
   String? _selectedImageUrl;
 ```
 
-**Giải thích dependencies:**
-- `dart:io`: File system operations
-- `image_picker`: Chọn ảnh từ gallery/camera
-- `permission_handler`: Xin quyền truy cập storage/camera
-- `FileObject`: Supabase type cho file metadata
+**Giải thích thư viện phụ thuộc:**
+- `dart:io`: Các thao tác hệ thống tập tin
+- `image_picker`: Chọn ảnh từ thư viện/máy ảnh
+- `permission_handler`: Xin quyền truy cập lưu trữ/máy ảnh
+- `FileObject`: Kiểu Supabase cho siêu dữ liệu tập tin
 
-### 2. Upload Image từ Gallery
+### 2. Tải Lên Ảnh Từ Thư Viện
 
 ```dart
 Future<void> _uploadImage() async {
@@ -152,14 +152,14 @@ Future<void> _uploadImage() async {
 }
 ```
 
-**Giải thích upload process:**
-- **Permission handling**: Xin quyền truy cập photos trước khi chọn
-- **Image optimization**: Giới hạn size (1024x1024) và quality (80%) để tối ưu
-- **Unique filename**: Sử dụng timestamp để tránh conflict
-- **File path structure**: `uploads/filename` cho organization
-- **FileOptions**: Cache control và upsert settings
+**Giải thích quá trình tải lên:**
+- **Xử lý quyền**: Xin quyền truy cập ảnh trước khi chọn
+- **Tối ưu hóa ảnh**: Giới hạn kích thước (1024x1024) và chất lượng (80%) để tối ưu
+- **Tên tập tin duy nhất**: Sử dụng dấu thời gian để tránh xung đột
+- **Cấu trúc đường dẫn tập tin**: `uploads/filename` cho tổ chức
+- **Tùy chọn tập tin**: Kiểm soát bộ đệm và cài đặt cập nhật
 
-### 3. Upload từ Camera
+### 3. Tải Lên Từ Máy Ảnh
 
 ```dart
 Future<void> _uploadFromCamera() async {
@@ -208,12 +208,12 @@ Future<void> _uploadFromCamera() async {
 }
 ```
 
-**Giải thích camera capture:**
-- **Camera permission**: Xin quyền camera riêng biệt
-- **Filename prefix**: 'camera_' để phân biệt nguồn ảnh
-- **Same optimization**: Cùng settings như gallery upload
+**Giải thích chụp ảnh bằng máy ảnh:**
+- **Quyền máy ảnh**: Xin quyền máy ảnh riêng biệt
+- **Tiền tố tên tập tin**: 'camera_' để phân biệt nguồn ảnh
+- **Tối ưu hóa giống nhau**: Cùng cài đặt như tải lên thư viện
 
-### 4. Load Files từ Storage
+### 4. Tải Tập Tin Từ Lưu Trữ
 
 ```dart
 Future<void> _loadFiles() async {
@@ -249,13 +249,13 @@ Future<void> _loadFiles() async {
 }
 ```
 
-**Giải thích file listing:**
-- `list()`: Lấy danh sách files trong path
-- `SearchOptions`: Cấu hình pagination và sorting
-- `limit: 100`: Giới hạn số files load cùng lúc
-- `sortBy`: Sắp xếp theo created_at desc (mới nhất trước)
+**Giải thích liệt kê tập tin:**
+- `list()`: Lấy danh sách tập tin trong đường dẫn
+- `Tùy chọn tìm kiếm`: Cấu hình phân trang và sắp xếp
+- `limit: 100`: Giới hạn số tập tin tải cùng lúc
+- `sortBy`: Sắp xếp theo created_at giảm dần (mới nhất trước)
 
-### 5. Get Public URL
+### 5. Lấy URL Công Khai
 
 ```dart
 String _getPublicUrl(String filePath) {
@@ -270,12 +270,12 @@ String _getPublicUrl(String filePath) {
 }
 ```
 
-**Giải thích public URL:**
-- `getPublicUrl()`: Tạo public URL để hiển thị ảnh
-- URL được cache và có thể access trực tiếp từ browser
-- Không cần authentication để view (vì bucket là public)
+**Giải thích URL công khai:**
+- `getPublicUrl()`: Tạo URL công khai để hiển thị ảnh
+- URL được lưu trong bộ đệm và có thể truy cập trực tiếp từ trình duyệt
+- Không cần xác thực để xem (vì bucket là công khai)
 
-### 6. Delete File
+### 6. Xóa Tập Tin
 
 ```dart
 Future<void> _deleteFile(String filePath) async {
@@ -329,14 +329,14 @@ Future<void> _deleteFile(String filePath) async {
 }
 ```
 
-**Giải thích delete operation:**
-- **Confirmation dialog**: UX best practice để tránh xóa nhầm
-- `remove([filePath])`: Accept array of file paths để có thể bulk delete
-- **State cleanup**: Clear selected image nếu file đó bị xóa
+**Giải thích thao tác xóa:**
+- **Hộp thoại xác nhận**: Thực hành UX tốt nhất để tránh xóa nhầm
+- `remove([filePath])`: Chấp nhận mảng đường dẫn tập tin để có thể xóa hàng loạt
+- **Dọn dẹp trạng thái**: Xóa ảnh đã chọn nếu tập tin đó bị xóa
 
 ## Giao Diện Người Dùng
 
-### 1. Upload Controls
+### 1. Điều Khiển Tải Lên
 
 ```dart
 Widget _buildUploadControls() {
@@ -394,7 +394,7 @@ Widget _buildUploadControls() {
 }
 ```
 
-### 2. Image Grid Display
+### 2. Hiển Thị Lưới Ảnh
 
 ```dart
 Widget _buildImageGrid() {
@@ -568,12 +568,12 @@ Widget _buildImageGrid() {
 }
 ```
 
-**Giải thích UI components:**
-- **Grid layout**: 2 columns với equal spacing
-- **Loading states**: Loading indicators cho images
-- **Error handling**: Error icons khi load ảnh fail
-- **Selection feedback**: Border highlight cho selected image
-- **Delete overlay**: Floating delete button trên mỗi image
+**Giải thích các thành phần giao diện:**
+- **Bố cục lưới**: 2 cột với khoảng cách đều nhau
+- **Trạng thái tải**: Chỉ báo tải cho ảnh
+- **Xử lý lỗi**: Biểu tượng lỗi khi tải ảnh thất bại
+- **Phản hồi lựa chọn**: Làm nổi bật viền cho ảnh đã chọn
+- **Lớp phủ xóa**: Nút xóa nổi trên mỗi ảnh
 
 ## Utility Functions
 
@@ -602,7 +602,7 @@ void dispose() {
 }
 ```
 
-## Permissions Configuration
+## Cấu Hình Quyền
 
 ### 1. Android (android/app/src/main/AndroidManifest.xml)
 
@@ -621,38 +621,38 @@ void dispose() {
 <string>This app needs access to photo library to select images</string>
 ```
 
-## Best Practices Được Áp Dụng
+## Thực Hành Tốt Nhất Được Áp Dụng
 
 ### 1. Security
-- **RLS Policies**: Kiểm soát quyền truy cập files theo user
-- **Permission handling**: Xin quyền trước khi truy cập camera/gallery
-- **Input validation**: Validate file types và sizes
+- **Chính sách RLS**: Kiểm soát quyền truy cập tập tin theo người dùng
+- **Xử lý quyền**: Xin quyền trước khi truy cập máy ảnh/thư viện
+- **Xác thực đầu vào**: Xác thực loại tập tin và kích thước
 
 ### 2. Performance
-- **Image optimization**: Resize và compress images trước upload
-- **Pagination**: Load files theo batch để tránh performance issues
-- **Cache control**: Sử dụng cache headers cho optimal loading
+- **Tối ưu hóa ảnh**: Thay đổi kích thước và nén ảnh trước khi tải lên
+- **Phân trang**: Tải tập tin theo lô để tránh vấn đề hiệu suất
+- **Kiểm soát bộ đệm**: Sử dụng header bộ đệm cho việc tải tối ưu
 
 ### 3. User Experience
-- **Loading states**: Visual feedback cho tất cả async operations
-- **Error handling**: User-friendly error messages
-- **Confirmation dialogs**: Tránh accidental deletions
-- **Visual feedback**: Selection states và progress indicators
+- **Trạng thái tải**: Phản hồi trực quan cho tất cả các thao tác bất đồng bộ
+- **Xử lý lỗi**: Thông báo lỗi thân thiện với người dùng
+- **Hộp thoại xác nhận**: Tránh xóa nhầm
+- **Phản hồi trực quan**: Trạng thái lựa chọn và chỉ báo tiến độ
 
-### 4. Storage Organization
-- **Folder structure**: Organize files trong folders
-- **Unique filenames**: Timestamp-based naming để tránh conflicts
-- **File metadata**: Track creation time và file info
+### 4. Tổ Chức Lưu Trữ
+- **Cấu trúc thư mục**: Tổ chức tập tin trong các thư mục
+- **Tên tập tin duy nhất**: Đặt tên dựa trên dấu thời gian để tránh xung đột
+- **Siêu dữ liệu tập tin**: Theo dõi thời gian tạo và thông tin tập tin
 
 ## Kết Luận
 
-Implementation Storage Supabase trong project này demonstration:
+Triển khai Lưu trữ Supabase trong dự án này thể hiện:
 
-1. **Complete File Management**: Upload, view, delete với full error handling
-2. **Security Implementation**: RLS policies và permission handling  
-3. **Performance Optimization**: Image compression và efficient loading
-4. **Professional UI/UX**: Loading states, error handling, visual feedback
-5. **Cross-platform Support**: Camera và gallery access trên iOS/Android
-6. **Production-Ready Code**: Best practices và scalable architecture
+1. **Quản Lý Tập Tin Hoàn Chỉnh**: Tải lên, xem, xóa với xử lý lỗi đầy đủ
+2. **Triển Khai Bảo Mật**: Chính sách RLS và xử lý quyền
+3. **Tối Ơu Hóa Hiệu Suất**: Nén ảnh và tải hiệu quả
+4. **Giao Diện/Trải Nghiệm Chuyên Nghiệp**: Trạng thái tải, xử lý lỗi, phản hồi trực quan
+5. **Hỗ Trợ Đa Nền Tảng**: Truy cập máy ảnh và thư viện trên iOS/Android
+6. **Mã Sẵn Sàng Sản Xuất**: Thực hành tốt nhất và kiến trúc có thể mở rộng
 
-Code này có thể được sử dụng làm foundation cho production file management systems.
+Mã này có thể được sử dụng làm nền tảng cho các hệ thống quản lý tập tin sản xuất.
