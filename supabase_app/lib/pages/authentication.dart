@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supabase_app/components/custom_button.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
@@ -163,6 +164,18 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     }
   }
 
+  Future<void> _signInWithFacebook() async {
+    // TODO: Implement Facebook sign-in logic
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Facebook sign-in not implemented yet'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    }
+  }
+
   Widget _buildAuthForm() {
     return Column(
       children: [
@@ -238,41 +251,38 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
             ],
           ),
           const SizedBox(height: 24),
+          // Social login buttons - Icon only (no background)
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                child: Container(
-                  height: 50,
-                  child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : _signInWithGoogle,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black87,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    icon: Icon(Icons.g_mobiledata, size: 24),
-                    label: const Text('Google', style: TextStyle(fontSize: 14)),
-                  ),
+              // Google
+              GestureDetector(
+                onTap: _isLoading ? null : _signInWithGoogle,
+                child: SvgPicture.asset(
+                  'assets/icons/google.svg',
+                  width: 40,
+                  height: 40,
                 ),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Container(
-                  height: 50,
-                  child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : _signInWithGitHub,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF24292e),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    icon: Icon(Icons.code, size: 20),
-                    label: const Text('GitHub', style: TextStyle(fontSize: 14)),
-                  ),
+              const SizedBox(width: 32),
+              // GitHub
+              GestureDetector(
+                onTap: _isLoading ? null : _signInWithGitHub,
+                child: SvgPicture.asset(
+                  'assets/icons/github_simple.svg',
+                  width: 40,
+                  height: 40,
+                  colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                ),
+              ),
+              const SizedBox(width: 32),
+              // Facebook
+              GestureDetector(
+                onTap: _isLoading ? null : _signInWithFacebook,
+                child: SvgPicture.asset(
+                  'assets/icons/facebook_simple.svg',
+                  width: 40,
+                  height: 40,
                 ),
               ),
             ],
