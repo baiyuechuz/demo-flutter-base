@@ -1,19 +1,19 @@
 ---
-title: "Tính năng Authentication Firebase - Chi tiết Implementation"
-description: "Phân tích chi tiết các tính năng authentication Firebase trong dự án với code thực tế"
+title: "Tính năng Xác thực Firebase - Chi tiết Triển khai"
+description: "Phân tích chi tiết các tính năng xác thực Firebase trong dự án với code thực tế"
 order: 12
 category: "firebase"
 ---
 
-# Tính năng Authentication Firebase - Chi tiết Implementation
+# Tính năng Xác thực Firebase - Chi tiết Triển khai
 
 ## Tổng quan
 
-Dự án này triển khai một hệ thống authentication hoàn chỉnh sử dụng Firebase Auth với email/password, social login (Google, Facebook, GitHub), và state management. Hệ thống hỗ trợ cả web và mobile với UI/UX tối ưu và error handling comprehensive.
+Dự án này triển khai một hệ thống xác thực hoàn chỉnh sử dụng Firebase Auth với email/mật khẩu, đăng nhập mạng xã hội (Google, Facebook, GitHub), và quản lý trạng thái. Hệ thống hỗ trợ cả web và di động với giao diện người dùng tối ưu và xử lý lỗi toàn diện.
 
-## Implementation Flutter
+## Triển khai Flutter
 
-### 1. Khởi tạo và Dependencies
+### 1. Khởi tạo và Phụ thuộc
 
 ```dart
 import 'dart:async';
@@ -42,24 +42,24 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   bool _showSuccessBanner = false;
   Timer? _bannerTimer;
   
-  // Google Sign-In instance (only for mobile)
+  // Instance Google Sign-In (chỉ cho di động)
   GoogleSignIn? _googleSignIn;
 ```
 
-**Giải thích dependencies:**
-- `firebase_auth`: Core Firebase authentication cho email/password và OAuth
-- `google_sign_in`: Google Sign-In SDK cho mobile platforms
-- `flutter_facebook_auth`: Facebook authentication cho mobile và web
-- `flutter_svg`: Để hiển thị SVG icons cho social login buttons
-- `Timer`: Để quản lý auto-hide success banner
+**Giải thích các phụ thuộc:**
+- `firebase_auth`: Thư viện Firebase xác thực cốt lõi cho email/mật khẩu và OAuth
+- `google_sign_in`: SDK Google Sign-In cho các nền tảng di động
+- `flutter_facebook_auth`: Xác thực Facebook cho di động và web
+- `flutter_svg`: Để hiển thị biểu tượng SVG cho các nút đăng nhập mạng xã hội
+- `Timer`: Để kiểm soát thời gian của thông báo pop-up
 
-### 2. Authentication State Management
+### 2. Quản lý Trạng thái Xác thực
 
 ```dart
 @override
 void initState() {
   super.initState();
-  // Initialize GoogleSignIn only for mobile platforms
+  // Khởi tạo GoogleSignIn chỉ cho nền tảng di động
   if (!kIsWeb) {
     _googleSignIn = GoogleSignIn();
   }
@@ -72,13 +72,13 @@ void _checkAuthState() {
       setState(() {
         _isLoggedIn = true;
       });
-      // Show success banner when logged in
+      // Hiển thị biểu ngữ thành công khi đăng nhập
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
           setState(() {
             _showSuccessBanner = true;
           });
-          // Auto-hide banner after 1 seconds
+          // Tự động ẩn biểu ngữ sau 1 giây
           _bannerTimer?.cancel();
           _bannerTimer = Timer(const Duration(seconds: 1), () {
             if (mounted) {
@@ -100,13 +100,12 @@ void _checkAuthState() {
 }
 ```
 
-**Giải thích state management:**
-- `authStateChanges()`: Stream listener cho real-time auth state changes
-- **Platform-specific initialization**: GoogleSignIn chỉ khởi tạo cho mobile
-- **Success banner**: Hiển thị feedback khi login thành công với auto-hide
-- **mounted check**: Tránh setState trên disposed widget
+**Giải thích quản lý trạng thái:**
+- `authStateChanges()`: Lắng nghe thay đổi trạng thái xác thực theo thời gian thực
+- **Khởi tạo theo nền tảng**: GoogleSignIn chỉ khởi tạo cho di động
+- **Biểu ngữ thành công**: Hiển thị phản hồi khi đăng nhập thành công với tự động ẩn
 
-### 3. Sign Up Implementation
+### 3. Triển khai Đăng ký
 
 ```dart
 Future<void> _signUp() async {
@@ -134,9 +133,9 @@ Future<void> _signUp() async {
       password: _passwordController.text,
     );
   } on FirebaseAuthException {
-    // Handle errors silently or with snackbar if needed
+    // Xử lý lỗi âm thầm hoặc với snackbar nếu cần
   } catch (_) {
-    // Handle errors silently or with snackbar if needed
+    // Xử lý lỗi âm thầm hoặc với snackbar nếu cần
   } finally {
     setState(() {
       _isLoading = false;
@@ -145,14 +144,14 @@ Future<void> _signUp() async {
 }
 ```
 
-**Giải thích sign up flow:**
-- **Input validation**: Kiểm tra email, password và confirm password
-- **Password requirements**: Minimum 6 characters theo Firebase standards
-- **Loading state**: Set loading để disable UI và show feedback
-- **Error handling**: Comprehensive try-catch với FirebaseAuthException
-- **Automatic session**: Session được tự động tạo sau successful signup
+**Giải thích quy trình đăng ký:**
+- **Xác thực đầu vào**: Kiểm tra email, mật khẩu và xác nhận mật khẩu
+- **Yêu cầu mật khẩu**: Tối thiểu 6 ký tự theo tiêu chuẩn Firebase
+- **Trạng thái tải**: Đặt loading để vô hiệu hóa giao diện và hiển thị phản hồi
+- **Xử lý lỗi**: Xử lý toàn diện với FirebaseAuthException
+- **Phiên tự động**: Phiên được tự động tạo sau khi đăng ký thành công
 
-### 4. Sign In Implementation
+### 4. Triển khai Đăng nhập
 
 ```dart
 Future<void> _signIn() async {
@@ -170,9 +169,9 @@ Future<void> _signIn() async {
       password: _passwordController.text,
     );
   } on FirebaseAuthException {
-    // Handle errors silently or with snackbar if needed
+    // Xử lý lỗi âm thầm hoặc với snackbar nếu cần
   } catch (_) {
-    // Handle errors silently or with snackbar if needed
+    // Xử lý lỗi âm thầm hoặc với snackbar nếu cần
   } finally {
     setState(() {
       _isLoading = false;
@@ -181,25 +180,25 @@ Future<void> _signIn() async {
 }
 ```
 
-**Giải thích sign in process:**
-- `signInWithEmailAndPassword()`: Firebase method cho email/password authentication
-- **Automatic session**: Session được tự động tạo và lưu
-- **State update**: Auth listener sẽ tự động update `_isLoggedIn`
-- **Silent error handling**: Errors được handle quietly trong production
+**Giải thích quy trình đăng nhập:**
+- `signInWithEmailAndPassword()`: Phương thức Firebase cho xác thực email/mật khẩu
+- **Phiên tự động**: Phiên được tự động tạo và lưu
+- **Cập nhật trạng thái**: Trình lắng nghe xác thực sẽ tự động cập nhật `_isLoggedIn`
+- **Xử lý lỗi âm thầm**: Lỗi được xử lý âm thầm trong sản xuất
 
-### 5. Sign Out Implementation
+### 5. Triển khai Đăng xuất
 
 ```dart
 Future<void> _signOut() async {
   try {
     await FirebaseAuth.instance.signOut();
     
-    // Only sign out from Google Sign-In on mobile
+    // Chỉ đăng xuất khỏi Google Sign-In trên di động
     if (!kIsWeb && _googleSignIn != null) {
       await _googleSignIn!.signOut();
     }
     
-    // Sign out from Facebook
+    // Đăng xuất khỏi Facebook
     await FacebookAuth.instance.logOut();
     
     setState(() {
@@ -208,18 +207,18 @@ Future<void> _signOut() async {
       _confirmPasswordController.clear();
     });
   } catch (_) {
-    // Handle errors silently or with snackbar if needed
+    // Xử lý lỗi âm thầm hoặc với snackbar nếu cần
   }
 }
 ```
 
-**Giải thích sign out:**
-- **Multi-provider logout**: Đăng xuất từ tất cả providers (Firebase, Google, Facebook)
-- **Platform-specific**: Google sign out chỉ trên mobile
-- **Form cleanup**: Clear tất cả input fields
-- **Automatic cleanup**: Auth listener sẽ set `_isLoggedIn = false`
+**Giải thích đăng xuất:**
+- **Đăng xuất đa nhà cung cấp**: Đăng xuất từ tất cả nhà cung cấp (Firebase, Google, Facebook)
+- **Theo nền tảng**: Đăng xuất Google chỉ trên di động
+- **Dọn dẹp form**: Xóa tất cả trường nhập liệu
+- **Dọn dẹp tự động**: Trình lắng nghe xác thực sẽ đặt `_isLoggedIn = false`
 
-### 6. Google Sign-In Implementation
+### 6. Triển khai Google Sign-In
 
 ```dart
 Future<void> _signInWithGoogle() async {
@@ -229,16 +228,16 @@ Future<void> _signInWithGoogle() async {
 
   try {
     if (kIsWeb) {
-      // For web, use Firebase Auth popup directly
+      // Cho web, sử dụng popup Firebase Auth trực tiếp
       GoogleAuthProvider googleProvider = GoogleAuthProvider();
       googleProvider.addScope('email');
       googleProvider.addScope('profile');
       
       await FirebaseAuth.instance.signInWithPopup(googleProvider);
     } else {
-      // For mobile, use Google Sign-In package
+      // Cho di động, sử dụng gói Google Sign-In
       if (_googleSignIn == null) {
-        throw Exception('Google Sign-In not initialized');
+        throw Exception('Google Sign-In chưa được khởi tạo');
       }
       final GoogleSignInAccount? googleUser = await _googleSignIn!.signIn();
       
@@ -249,20 +248,20 @@ Future<void> _signInWithGoogle() async {
         return;
       }
 
-      // Obtain the auth details from the request
+      // Lấy chi tiết xác thực từ yêu cầu
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-      // Create a new credential
+      // Tạo thông tin xác thực mới
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      // Once signed in, return the UserCredential
+      // Sau khi đăng nhập, trả về UserCredential
       await FirebaseAuth.instance.signInWithCredential(credential);
     }
   } catch (_) {
-    // Handle errors silently or with snackbar if needed
+    // Xử lý lỗi âm thầm hoặc với snackbar nếu cần
   } finally {
     setState(() {
       _isLoading = false;
@@ -271,13 +270,13 @@ Future<void> _signInWithGoogle() async {
 }
 ```
 
-**Giải thích Google authentication:**
-- **Platform-specific implementation**: Web sử dụng popup, mobile sử dụng Google Sign-In package
-- **Scope management**: Request email và profile permissions
-- **Credential flow**: Convert Google auth thành Firebase credential
-- **User cancellation**: Handle case khi user cancel login
+**Giải thích xác thực Google:**
+- **Triển khai theo nền tảng**: Web sử dụng popup, di động sử dụng gói Google Sign-In
+- **Quản lý phạm vi**: Yêu cầu quyền email và profile
+- **Luồng thông tin xác thực**: Chuyển đổi xác thực Google thành thông tin xác thực Firebase
+- **Hủy người dùng**: Xử lý trường hợp người dùng hủy đăng nhập
 
-### 7. GitHub Sign-In Implementation
+### 7. Triển khai GitHub Sign-In
 
 ```dart
 Future<void> _signInWithGitHub() async {
@@ -287,20 +286,20 @@ Future<void> _signInWithGitHub() async {
 
   try {
     if (kIsWeb) {
-      // For web, use popup sign-in
+      // Cho web, sử dụng popup đăng nhập
       GithubAuthProvider githubProvider = GithubAuthProvider();
       githubProvider.addScope('user:email');
       
       await FirebaseAuth.instance.signInWithPopup(githubProvider);
     } else {
-      // For mobile, use redirect (requires proper mobile configuration)
+      // Cho di động, sử dụng chuyển hướng (cần cấu hình di động phù hợp)
       GithubAuthProvider githubProvider = GithubAuthProvider();
       githubProvider.addScope('user:email');
       
       await FirebaseAuth.instance.signInWithProvider(githubProvider);
     }
   } catch (_) {
-    // Handle errors silently or with snackbar if needed
+    // Xử lý lỗi âm thầm hoặc với snackbar nếu cần
   } finally {
     setState(() {
       _isLoading = false;
@@ -309,13 +308,13 @@ Future<void> _signInWithGitHub() async {
 }
 ```
 
-**Giải thích GitHub authentication:**
-- **Web popup**: Sử dụng `signInWithPopup` cho web platform
-- **Mobile provider**: Sử dụng `signInWithProvider` cho mobile
-- **Email scope**: Request user:email permission để access email address
-- **OAuth flow**: Firebase handle OAuth flow tự động
+**Giải thích xác thực GitHub:**
+- **Popup web**: Sử dụng `signInWithPopup` cho nền tảng web
+- **Nhà cung cấp di động**: Sử dụng `signInWithProvider` cho di động
+- **Phạm vi email**: Yêu cầu quyền user:email để truy cập địa chỉ email
+- **Luồng OAuth**: Firebase xử lý luồng OAuth tự động
 
-### 8. Facebook Sign-In Implementation
+### 8. Triển khai Facebook Sign-In
 
 ```dart
 Future<void> _signInWithFacebook() async {
@@ -325,7 +324,7 @@ Future<void> _signInWithFacebook() async {
 
   try {
     if (kIsWeb) {
-      // For web, use Firebase Auth popup directly
+      // Cho web, sử dụng popup Firebase Auth trực tiếp
       FacebookAuthProvider facebookProvider = FacebookAuthProvider();
       facebookProvider.addScope('email');
       facebookProvider.setCustomParameters({
@@ -334,22 +333,22 @@ Future<void> _signInWithFacebook() async {
       
       await FirebaseAuth.instance.signInWithPopup(facebookProvider);
     } else {
-      // For mobile, use Facebook Auth package
+      // Cho di động, sử dụng gói Facebook Auth
       final LoginResult result = await FacebookAuth.instance.login(
         permissions: ['email', 'public_profile'],
       );
 
       if (result.status == LoginStatus.success) {
-        // Create a credential from the access token
+        // Tạo thông tin xác thực từ access token
         final OAuthCredential facebookAuthCredential =
             FacebookAuthProvider.credential(result.accessToken!.tokenString);
 
-        // Once signed in, return the UserCredential
+        // Sau khi đăng nhập, trả về UserCredential
         await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
       }
     }
   } catch (_) {
-    // Handle errors silently or with snackbar if needed
+    // Xử lý lỗi âm thầm hoặc với snackbar nếu cần
   } finally {
     setState(() {
       _isLoading = false;
@@ -358,15 +357,15 @@ Future<void> _signInWithFacebook() async {
 }
 ```
 
-**Giải thích Facebook authentication:**
-- **Platform-specific**: Web popup vs Mobile Facebook Auth package
-- **Permission management**: Request email và public_profile
-- **Credential conversion**: Convert Facebook token thành Firebase credential
-- **Status checking**: Verify login result status trước khi proceed
+**Giải thích xác thực Facebook:**
+- **Theo nền tảng**: Popup web so với gói Facebook Auth di động
+- **Quản lý quyền**: Yêu cầu email và public_profile
+- **Chuyển đổi thông tin xác thực**: Chuyển đổi token Facebook thành thông tin xác thực Firebase
+- **Kiểm tra trạng thái**: Xác minh trạng thái kết quả đăng nhập trước khi tiếp tục
 
-## Giao Diện Người Dùng
+## Giao diện Người dùng
 
-### 1. Authentication Form
+### 1. Form Xác thực
 
 ```dart
 // Email field
@@ -403,7 +402,7 @@ TextField(
   decoration: InputDecoration(
     hintText: 'Password',
     hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
-    // Similar styling...
+    // Định dạng tương tự...
   ),
 ),
 
@@ -415,19 +414,19 @@ if (_isSignUp) ...[
     style: const TextStyle(color: Colors.white),
     decoration: InputDecoration(
       hintText: 'Confirm Password',
-      // Similar styling...
+      // Định dạng tương tự...
     ),
   ),
 ],
 ```
 
-**Giải thích form design:**
-- **Dark theme**: Consistent với app design với white text trên dark background
-- **Input types**: Email keyboard cho email field, obscured text cho password
-- **Conditional rendering**: Confirm password chỉ hiện trong sign up mode
-- **Visual feedback**: Focus border color changes và proper hint styling
+**Giải thích thiết kế form:**
+- **Chủ đề tối**: Nhất quán với thiết kế ứng dụng với văn bản trắng trên nền tối
+- **Loại đầu vào**: Bàn phím email cho trường email, văn bản ẩn cho mật khẩu
+- **Hiển thị có điều kiện**: Xác nhận mật khẩu chỉ hiện trong chế độ đăng ký
+- **Phản hồi trực quan**: Màu viền focus thay đổi và định dạng gợi ý phù hợp
 
-### 2. Action Buttons
+### 2. Các Nút Hành động
 
 ```dart
 // Sign in/up button
@@ -459,16 +458,14 @@ TextButton(
 ),
 ```
 
-**Giải thích button behavior:**
-- **Dynamic text**: Change based on loading state và sign up/in mode
-- **Loading states**: Disable button và show loading text khi processing
-- **Mode switching**: Toggle giữa sign up và sign in với form cleanup
-- **Custom styling**: Sử dụng CustomGradientButton cho consistency
+**Giải thích hành vi nút:**
+- **Văn bản động**: Thay đổi dựa trên trạng thái tải và chế độ đăng ký/đăng nhập
+- **Chuyển đổi chế độ**: Chuyển đổi giữa đăng ký và đăng nhập với dọn dẹp form
 
-### 3. Social Login Section
+### 3. Phần Đăng nhập Mạng xã hội
 
 ```dart
-// Divider with "OR" text
+// Dấu phân cách với văn bản "OR"
 Row(
   children: [
     const Expanded(
@@ -497,18 +494,18 @@ Row(
   ],
 ),
 
-// Social Sign-In Buttons Row
+// Hàng Nút Đăng nhập Mạng xã hội
 Row(
   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
   children: [
-    // Google Sign-In Button
+    // Nút Google Sign-In
     _buildSocialButton(
       onTap: _isLoading ? null : _signInWithGoogle,
       iconPath: 'assets/icons/google_logo.svg',
       iconSize: 32,
     ),
     
-    // GitHub Sign-In Button
+    // Nút GitHub Sign-In
     _buildSocialButton(
       onTap: _isLoading ? null : () async {
         if (kIsWeb) {
@@ -521,7 +518,7 @@ Row(
       isEnabled: kIsWeb,
     ),
     
-    // Facebook Sign-In Button
+    // Nút Facebook Sign-In
     _buildSocialButton(
       onTap: _isLoading ? null : _signInWithFacebook,
       iconPath: 'assets/icons/facebook_logo.svg',
@@ -531,14 +528,13 @@ Row(
 ),
 ```
 
-**Giải thích social section:**
-- **Visual separator**: Elegant divider với descriptive text
-- **SVG icons**: Custom social media icons từ assets
-- **Platform restrictions**: GitHub chỉ enable trên web platform
-- **Proper spacing**: spaceEvenly distribution cho balanced layout
-- **Loading awareness**: Disable buttons khi có operation đang chạy
+**Giải thích phần mạng xã hội:**
+- **Biểu tượng SVG**: Biểu tượng mạng xã hội tùy chỉnh từ tài nguyên
+- **Hạn chế nền tảng**: GitHub chỉ bật trên nền tảng web
+- **Khoảng cách phù hợp**: Phân bố bố cục cân bằng
+- **Nhận thức tải**: Vô hiệu hóa nút khi có thao tác đang chạy
 
-### 4. Social Button Widget
+### 4. Widget Nút Mạng xã hội
 
 ```dart
 Widget _buildSocialButton({
@@ -579,17 +575,15 @@ Widget _buildSocialButton({
 }
 ```
 
-**Giải thích social button:**
-- **Circular design**: 72x72 circular buttons cho touch-friendly UX
-- **Ripple effect**: InkWell provides Material Design ripple
-- **SVG support**: Flexible SVG rendering với color filtering
-- **Disabled state**: Visual feedback cho disabled buttons
-- **Icon customization**: Size và color customizable
+**Giải thích nút mạng xã hội:**
+- **Thiết kế tròn**: Nút tròn 72x72 cho trải nghiệm người dùng thân thiện với cảm ứng
+- **Hỗ trợ SVG**: Hiển thị SVG linh hoạt với lọc màu
+- **Tùy chỉnh biểu tượng**: Kích thước và màu có thể tùy chỉnh
 
-### 5. User Profile Display
+### 5. Hiển thị Hồ sơ Người dùng
 
 ```dart
-// Success Icon
+// Biểu tượng Thành công
 Container(
   width: 120,
   height: 120,
@@ -619,7 +613,7 @@ Container(
   ),
 ),
 
-// Welcome Card
+// Thẻ Chào mừng
 Container(
   width: double.infinity,
   padding: const EdgeInsets.all(24),
@@ -663,13 +657,12 @@ Container(
 ),
 ```
 
-**Giải thích profile display:**
-- **Success visual**: Green gradient icon với shadow cho celebration effect
-- **User information**: Display email và truncated user ID
-- **Styled container**: Card design với subtle border và background
-- **Typography hierarchy**: Different font sizes và weights cho information hierarchy
+**Giải thích hiển thị hồ sơ:**
+- **Hình ảnh thành công**: Biểu tượng gradient xanh với bóng cho hiệu ứng kỷ niệm
+- **Thông tin người dùng**: Hiển thị email và ID người dùng được cắt ngắn
+- **Thứ bậc kiểu chữ**: Kích thước và trọng lượng phông chữ khác nhau cho thứ bậc thông tin
 
-### 6. Success Banner
+### 6. Biểu ngữ Thành công
 
 ```dart
 if (_showSuccessBanner && _isLoggedIn)
@@ -734,14 +727,14 @@ if (_showSuccessBanner && _isLoggedIn)
   ),
 ```
 
-**Giải thích success banner:**
-- **Animated appearance**: Smooth slide-in animation từ bottom
-- **Auto-hide functionality**: Tự động ẩn sau 1 giây
-- **Manual dismiss**: User có thể close manually
-- **SafeArea awareness**: Respect device safe areas
-- **Success messaging**: Clear visual và text feedback
+**Giải thích biểu ngữ thành công:**
+- **Xuất hiện có hoạt ảnh**: Hoạt ảnh trượt vào mượt mà từ dưới lên
+- **Chức năng tự ẩn**: Tự động ẩn sau 1 giây
+- **Đóng thủ công**: Người dùng có thể đóng thủ công
+- **Nhận thức SafeArea**: Tôn trọng vùng an toàn của thiết bị
+- **Thông báo thành công**: Phản hồi trực quan và văn bản rõ ràng
 
-### 7. Main Build Method
+### 7. Phương thức Build Chính
 
 ```dart
 @override
@@ -758,13 +751,13 @@ Widget build(BuildContext context) {
     backgroundColor: const Color(0xFF0b1221),
     body: Stack(
       children: [
-        // Main content
+        // Nội dung chính
         SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Show login form only when not logged in
+              // Chỉ hiển thị form đăng nhập khi chưa đăng nhập
               if (!_isLoggedIn) ...[
                 const Icon(Icons.lock, color: Colors.white, size: 80),
                 Text(
@@ -775,35 +768,35 @@ Widget build(BuildContext context) {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                // Auth form...
+                // Form xác thực...
               ],
               
-              // Success UI (when logged in)
+              // Giao diện thành công (khi đã đăng nhập)
               if (_isLoggedIn && FirebaseAuth.instance.currentUser != null) ...[
-                // User profile display...
+                // Hiển thị hồ sơ người dùng...
               ],
             ],
           ),
         ),
         
-        // Success Banner overlay
-        // Banner implementation...
+        // Lớp phủ Biểu ngữ Thành công
+        // Triển khai biểu ngữ...
       ],
     ),
   );
 }
 ```
 
-**Giải thích main layout:**
-- **Conditional rendering**: Switch giữa auth form và user profile based on state
-- **Stack layout**: Overlay success banner trên main content
-- **Scrollable content**: SingleChildScrollView để handle keyboard và long content
-- **Consistent theming**: Dark theme throughout với proper contrast
-- **Visual hierarchy**: Clear distinction giữa authenticated và unauthenticated states
+**Giải thích bố cục chính:**
+- **Hiển thị có điều kiện**: Chuyển đổi giữa form xác thực và hồ sơ người dùng dựa trên trạng thái
+- **Bố cục Stack**: Lớp phủ biểu ngữ thành công trên nội dung chính
+- **Nội dung có thể cuộn**: SingleChildScrollView để xử lý bàn phím và nội dung dài
+- **Chủ đề nhất quán**: Chủ đề tối xuyên suốt với độ tương phản phù hợp
+- **Thứ bậc trực quan**: Phân biệt rõ ràng giữa trạng thái đã xác thực và chưa xác thực
 
-## Utility Functions
+## Các Hàm Tiện ích
 
-### 1. Helper Methods
+### 1. Phương thức Hỗ trợ
 
 ```dart
 @override
@@ -816,13 +809,13 @@ void dispose() {
 }
 ```
 
-**Giải thích utilities:**
-- **Memory management**: Proper disposal của controllers và timers
-- **Resource cleanup**: Tránh memory leaks và dangling references
+**Giải thích tiện ích:**
+- **Quản lý bộ nhớ**: Hủy bỏ đúng cách các controller và timer
+- **Dọn dẹp tài nguyên**: Tránh rò rỉ bộ nhớ và tham chiếu treo
 
-## Environment Setup
+## Thiết lập Môi trường
 
-### 1. Main.dart Initialization
+### 1. Khởi tạo Main.dart
 
 ```dart
 Future<void> main() async {
@@ -836,10 +829,10 @@ Future<void> main() async {
 }
 ```
 
-### 2. Firebase Options Configuration
+### 2. Cấu hình Tùy chọn Firebase
 
 ```dart
-// firebase_options.dart (generated by FlutterFire CLI)
+// firebase_options.dart (được tạo bởi FlutterFire CLI)
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -854,102 +847,102 @@ class DefaultFirebaseOptions {
         return macos;
       default:
         throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for platform',
+          'DefaultFirebaseOptions chưa được cấu hình cho nền tảng',
         );
     }
   }
-  // Platform-specific configurations...
+  // Cấu hình theo nền tảng...
 }
 ```
 
-## Authentication Flow
+## Luồng Xác thực
 
-### 1. User Journey
-
-```
-1. User opens app
-   ↓
-2. Check current auth state
-   ↓
-3a. If authenticated → Show user profile
-3b. If not authenticated → Show auth form
-   ↓
-4. User chooses sign in method
-   ↓
-5a. Email/Password → Fill form → Submit
-5b. Social Login → Popup/Redirect → OAuth flow
-   ↓
-6. Send request to Firebase
-   ↓
-7a. Success → Update UI, show profile
-7b. Error → Show error message, stay on form
-   ↓
-8. User can sign out to return to auth form
-```
-
-### 2. State Management Flow
+### 1. Thao tác của  Người dùng
 
 ```
-Firebase AuthStateChange Stream
+1. Người dùng mở ứng dụng
    ↓
-Listen for changes in initState
+2. Kiểm tra trạng thái xác thực hiện tại
    ↓
-Extract user from User object
+3a. Nếu đã xác thực → Hiển thị hồ sơ người dùng
+3b. Nếu chưa xác thực → Hiển thị form xác thực
    ↓
-Update _isLoggedIn state
+4. Người dùng chọn phương thức đăng nhập
    ↓
-Trigger UI rebuild
+5a. Email/Mật khẩu → Điền form → Gửi
+5b. Đăng nhập Mạng xã hội → Popup/Chuyển hướng → Luồng OAuth
    ↓
-Show appropriate interface
+6. Gửi yêu cầu đến Firebase
    ↓
-Handle success banner display
+7a. Thành công → Cập nhật giao diện, hiển thị hồ sơ
+7b. Lỗi → Hiển thị thông báo lỗi, ở lại form
+   ↓
+8. Người dùng có thể đăng xuất để quay lại form xác thực
 ```
 
-## Best Practices Được Áp Dụng
+### 2. Luồng Quản lý Trạng thái
 
-### 1. Security
-- **Platform-specific implementation**: Different approaches cho web vs mobile
-- **OAuth scope management**: Proper permission requests
-- **Session management**: Automatic session handling bởi Firebase
-- **Secure token storage**: Tokens được lưu securely bởi Firebase SDK
+```
+Luồng Firebase AuthStateChange
+   ↓
+Lắng nghe thay đổi trong initState
+   ↓
+Trích xuất người dùng từ User object
+   ↓
+Cập nhật trạng thái _isLoggedIn
+   ↓
+Kích hoạt xây dựng lại giao diện
+   ↓
+Hiển thị giao diện phù hợp
+   ↓
+Xử lý hiển thị biểu ngữ thành công
+```
 
-### 2. User Experience
-- **Loading states**: Visual feedback cho tất cả async operations
-- **Platform awareness**: GitHub chỉ enable trên web, Google khác implementation
-- **Success feedback**: Banner notification với auto-hide
-- **Error handling**: Comprehensive error catching và user feedback
-- **State persistence**: Auth state được maintain across app restarts
+## Thực hành Tốt nhất Được Áp dụng
 
-### 3. Code Quality
-- **Platform detection**: `kIsWeb` để differentiate implementations
-- **Null safety**: Proper null handling với nullable types
-- **Memory management**: Proper disposal của controllers và timers
-- **Separation of concerns**: UI, business logic, và state management tách biệt
-- **Consistent theming**: Unified dark theme với proper contrast
+### 1. Bảo mật
+- **Triển khai theo nền tảng**: Phương pháp khác nhau cho web vs di động
+- **Quản lý phạm vi OAuth**: Yêu cầu quyền phù hợp
+- **Quản lý phiên**: Xử lý phiên tự động bởi Firebase
+- **Lưu trữ token an toàn**: Token được lưu an toàn bởi Firebase SDK
 
-### 4. Performance
-- **Lazy loading**: GoogleSignIn chỉ initialize khi cần
-- **Timer management**: Proper cleanup để tránh memory leaks
-- **Conditional rendering**: Chỉ render components khi cần thiết
-- **Async operations**: Non-blocking UI với proper loading states
+### 2. Trải nghiệm Người dùng
+- **Trạng thái tải**: Phản hồi trực quan cho tất cả các thao tác bất đồng bộ
+- **Nhận thức nền tảng**: GitHub chỉ bật trên web, Google có triển khai khác
+- **Phản hồi thành công**: Thông báo biểu ngữ với tự ẩn
+- **Xử lý lỗi**: Bắt lỗi toàn diện và phản hồi người dùng
+- **Lưu trữ trạng thái**: Trạng thái xác thực được duy trì qua việc khởi động lại ứng dụng
 
-## Error Handling
+### 3. Chất lượng Code
+- **Phát hiện nền tảng**: `kIsWeb` để phân biệt triển khai
+- **An toàn null**: Xử lý null phù hợp với các loại nullable
+- **Quản lý bộ nhớ**: Hủy bỏ đúng cách các controller và timer
+- **Tách biệt mối quan tâm**: Giao diện, logic nghiệp vụ và quản lý trạng thái tách biệt
+- **Chủ đề nhất quán**: Chủ đề tối thống nhất với độ tương phản phù hợp
 
-### Common Firebase Auth Errors
+### 4. Hiệu suất
+- **Tải chậm**: GoogleSignIn chỉ khởi tạo khi cần
+- **Quản lý timer**: Dọn dẹp đúng cách để tránh rò rỉ bộ nhớ
+- **Hiển thị có điều kiện**: Chỉ hiển thị các thành phần khi cần thiết
+- **Thao tác bất đồng bộ**: Giao diện không chặn với trạng thái tải phù hợp
 
-| Error Code | Description | Solution |
-|------------|-------------|----------|
+## Xử lý Lỗi
+
+### Các Lỗi Xác thực Firebase Phổ biến
+
+| Mã Lỗi | Mô tả | Giải pháp |
+|---------|-------|-----------|
 | `email-already-in-use` | Email đã được đăng ký | Sử dụng email khác hoặc đăng nhập |
-| `weak-password` | Mật khẩu quá yếu | Sử dụng mật khẩu mạnh hơn (min 6 chars) |
+| `weak-password` | Mật khẩu quá yếu | Sử dụng mật khẩu mạnh hơn (tối thiểu 6 ký tự) |
 | `user-not-found` | Không tìm thấy người dùng | Kiểm tra email hoặc tạo tài khoản |
 | `wrong-password` | Mật khẩu sai | Kiểm tra mật khẩu hoặc đặt lại |
 | `invalid-email` | Định dạng email không hợp lệ | Kiểm tra định dạng email |
 | `user-disabled` | Tài khoản bị vô hiệu hóa | Liên hệ hỗ trợ |
-| `operation-not-allowed` | Phương thức xác thực chưa được bật | Bật trong Firebase Console |
+| `operation-not-allowed` | Phương thức xác thực chưa được bật | Bật trong Bảng điều khiển Firebase |
 
-## Platform Configuration
+## Cấu hình Nền tảng
 
-### Android Setup
+### Thiết lập Android
 ```xml
 <!-- android/app/src/main/AndroidManifest.xml -->
 <meta-data
@@ -957,7 +950,7 @@ Handle success banner display
     android:value="@integer/google_play_services_version" />
 ```
 
-### iOS Setup
+### Thiết lập iOS
 ```xml
 <!-- ios/Runner/Info.plist -->
 <key>CFBundleURLTypes</key>
@@ -973,18 +966,18 @@ Handle success banner display
 </array>
 ```
 
-### Web Setup
-Firebase configuration được handle automatic bởi FlutterFire CLI.
+### Thiết lập Web
+Cấu hình Firebase được xử lý tự động bởi FlutterFire CLI.
 
-## Kết Luận
+## Kết luận
 
-Implementation Authentication Firebase trong project này demonstration:
+Triển khai Xác thực Firebase trong dự án này thể hiện:
 
-1. **Complete Multi-Platform Auth**: Email/password, Google, Facebook, GitHub với platform-specific optimizations
-2. **Professional UI/UX**: Dark theme, loading states, success feedback, error handling
-3. **Robust State Management**: Real-time auth state changes với proper lifecycle management
-4. **Platform Awareness**: Different implementations cho web vs mobile
-5. **Production Ready**: Comprehensive error handling, memory management, security practices
-6. **Scalable Architecture**: Easy to extend với additional auth methods và providers
+1. **Xác thực Đa nền tảng Hoàn chỉnh**: Email/mật khẩu, Google, Facebook, GitHub với tối ưu hóa theo nền tảng
+2. **Giao diện Người dùng Chuyên nghiệp**: Chủ đề tối, trạng thái tải, phản hồi thành công, xử lý lỗi
+3. **Quản lý Trạng thái Mạnh mẽ**: Thay đổi trạng thái xác thực theo thời gian thực với quản lý vòng đời phù hợp
+4. **Nhận thức Nền tảng**: Triển khai khác nhau cho web vs di động
+5. **Sẵn sàng Sản xuất**: Xử lý lỗi toàn diện, quản lý bộ nhớ, thực hành bảo mật
+6. **Kiến trúc Có thể Mở rộng**: Dễ dàng mở rộng với các phương thức xác thực và nhà cung cấp bổ sung
 
-Code này cung cấp foundation mạnh mẽ cho production authentication systems với Firebase, supporting tất cả major platforms và social providers.
+Code này cung cấp nền tảng mạnh mẽ cho các hệ thống xác thực sản xuất với Firebase, hỗ trợ tất cả các nền tảng chính và nhà cung cấp mạng xã hội.
