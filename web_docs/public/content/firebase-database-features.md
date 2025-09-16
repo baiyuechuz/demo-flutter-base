@@ -12,6 +12,46 @@ category: "firebase"
 
 Dự án này triển khai hệ thống CRUD notes sử dụng Firebase Cloud Firestore với UI hiện đại, xác thực, xác nhận xóa, loading/error states, và best practices thực tế.
 
+
+
+## NoSQL là gì
+
+NoSQL (Not Only SQL) là một loại cơ sở dữ liệu không sử dụng cấu trúc bảng như truyền thống (SQL), mà lưu trữ dữ liệu dưới dạng document, key-value, graph hoặc column-family. NoSQL phù hợp cho các ứng dụng cần lưu trữ dữ liệu linh hoạt, không cố định schema, dễ mở rộng và hỗ trợ truy vấn nhanh trên dữ liệu lớn.
+
+**Ưu điểm của NoSQL:**
+- Không cần định nghĩa cấu trúc bảng trước, dễ thay đổi dữ liệu.
+- Hiệu năng cao với dữ liệu lớn và nhiều người dùng đồng thời.
+- Dễ mở rộng theo chiều ngang (scale-out).
+- Phù hợp cho các ứng dụng realtime, mobile, web hiện đại.
+
+---
+
+## Collection và NoSQL Firebase
+
+Firebase Firestore là một cơ sở dữ liệu NoSQL dạng document, nơi dữ liệu được lưu trữ dưới dạng các collection (bộ sưu tập) và document (tài liệu). Mỗi collection chứa nhiều document, mỗi document là một đối tượng JSON có thể chứa các trường dữ liệu, mảng, hoặc thậm chí các sub-collection bên trong.
+
+**Đặc điểm nổi bật của Firestore:**
+- Không cần định nghĩa schema trước, linh hoạt cho mọi loại dữ liệu.
+- Truy vấn mạnh mẽ, hỗ trợ filter, sort, pagination.
+- Dữ liệu realtime: Tự động đồng bộ khi có thay đổi.
+- Mỗi document có một ID duy nhất, có thể tự sinh hoặc do người dùng chỉ định.
+- Hỗ trợ bảo mật chi tiết qua Security Rules.
+
+Ví dụ về cấu trúc collection và document:
+
+```js
+users (collection)
+  └── userId (document)
+    ├── name: string
+    ├── email: string
+    ├── notes (sub-collection)
+      └── noteId (document)
+```
+
+Trong dự án này, chúng ta sử dụng collection 'notes' để lưu trữ các ghi chú, mỗi ghi chú là một document với các trường như title, description, createdAt, updatedAt.
+
+---
+
 ## Cấu trúc Database
 
 ### 1. Firestore Collection Structure
@@ -70,15 +110,16 @@ class _DatabasePageState extends State<DatabasePage> {
 }
 ```
 
+
 **Giải thích quản lý trạng thái:**
 
-- <code>firestore</code>: Đối tượng client Firestore để thao tác dữ liệu.
-- <code>_titleController</code>, <code>_descriptionController</code>: Quản lý các trường nhập liệu.
-- <code>_formKey</code>: GlobalKey để quản lý và validate form.
-- <code>List&lt;DocumentSnapshot&gt; _notes</code>: Lưu trữ danh sách ghi chú từ cơ sở dữ liệu.
-- <code>_isLoading</code>: Trạng thái tải khi fetch dữ liệu.
-- <code>_isSubmitting</code>: Trạng thái đang gửi khi thực hiện thao tác CRUD.
-- <code>_editingId</code>: ID của ghi chú đang được chỉnh sửa (String, nullable).
+- `firestore`: Đối tượng client Firestore để thao tác dữ liệu.
+- `_titleController`, `_descriptionController`: Quản lý các trường nhập liệu.
+- `_formKey`: GlobalKey để quản lý và validate form.
+- `List<DocumentSnapshot> _notes`: Lưu trữ danh sách ghi chú từ cơ sở dữ liệu.
+- `_isLoading`: Trạng thái tải khi fetch dữ liệu.
+- `_isSubmitting`: Trạng thái đang gửi khi thực hiện thao tác CRUD.
+- `_editingId`: ID của ghi chú đang được chỉnh sửa (`String`, nullable).
 
 
 ### 2. Các CRUD Operations
@@ -107,14 +148,14 @@ Future<void> _addNote() async {
 }
 ```
 
-**Giải thích:**
+
 **Giải thích logic thêm mới:**
 
 - **Xác thực form**: Kiểm tra hợp lệ trước khi thêm mới.
-- **Trạng thái gửi**: Sử dụng <code>_isSubmitting</code> để hiển thị loading khi gửi dữ liệu.
-- **Thao tác thêm**: <code>firestore.collection('notes').add({...})</code> thêm document mới vào collection.
-- **Xử lý thời gian**: <code>FieldValue.serverTimestamp()</code> lấy timestamp từ server.
-- **Cleanup**: <code>_clearForm()</code> reset form, <code>_showSnackBar()</code> hiển thị thông báo.
+- **Trạng thái gửi**: Sử dụng `_isSubmitting` để hiển thị loading khi gửi dữ liệu.
+- **Thao tác thêm**: `firestore.collection('notes').add({...})` thêm document mới vào collection.
+- **Xử lý thời gian**: `FieldValue.serverTimestamp()` lấy timestamp từ server.
+- **Cleanup**: `_clearForm()` reset form.
 - `_showSnackBar()`: Hiển thị thông báo trạng thái cho người dùng.
 
 
@@ -140,14 +181,13 @@ Future<void> _fetchNotes() async {
 }
 ```
 
-**Giải thích:**
+
 **Giải thích logic lấy danh sách:**
 
-- **Trạng thái tải**: <code>_isLoading</code> hiển thị loading khi fetch dữ liệu.
-- **Truy vấn**: <code>firestore.collection('notes').orderBy('createdAt', descending: true).get()</code> lấy toàn bộ notes, sắp xếp mới nhất trước.
-- **Cập nhật UI**: <code>setState()</code> cập nhật lại danh sách notes.
-- **Xử lý lỗi**: <code>_showSnackBar()</code> hiển thị thông báo lỗi nếu có.
-- `_showSnackBar()`: Hiển thị thông báo lỗi nếu có.
+- **Trạng thái tải**: `_isLoading` hiển thị loading khi fetch dữ liệu.
+- **Truy vấn**: `firestore.collection('notes').orderBy('createdAt', descending: true).get()` lấy toàn bộ notes, sắp xếp mới nhất trước.
+- **Cập nhật UI**: `setState()` cập nhật lại danh sách notes.
+- **Xử lý lỗi**: `_showSnackBar()` hiển thị thông báo lỗi nếu có.
 
 
 #### Cập nhật note
@@ -172,15 +212,14 @@ Future<void> _updateNote() async {
 }
 ```
 
-**Giải thích:**
+
 **Giải thích logic cập nhật:**
 
-- **Xác thực form và ID**: Kiểm tra cả form validation và <code>_editingId</code> không null
-- **Trạng thái gửi**: Sử dụng <code>_isSubmitting</code> thay vì <code>_isLoading</code> cho thao tác gửi dữ liệu
-- **Thao tác cập nhật**: <code>firestore.collection('notes').doc(_editingId).update({...})</code> cập nhật document theo id
-- **Xử lý thời gian**: <code>FieldValue.serverTimestamp()</code> cập nhật thời gian chỉnh sửa
-- **Cleanup**: <code>_clearForm()</code> reset lại form và trạng thái edit
-- `_clearForm()`: Reset lại form và trạng thái edit.
+- **Xác thực form và ID**: Kiểm tra cả form validation và `_editingId` không null
+- **Trạng thái gửi**: Sử dụng `_isSubmitting` thay vì `_isLoading` cho thao tác gửi dữ liệu
+- **Thao tác cập nhật**: `firestore.collection('notes').doc(_editingId).update({...})` cập nhật document theo id
+- **Xử lý thời gian**: `FieldValue.serverTimestamp()` cập nhật thời gian chỉnh sửa
+- **Cleanup**: `_clearForm()` reset lại form và trạng thái edit
 
 
 #### Xóa note (có xác nhận)
@@ -198,13 +237,12 @@ Future<void> _deleteNote(String id) async {
 }
 ```
 
-**Giải thích:**
+
 **Giải thích logic xóa:**
 
-- **Dialog xác nhận**: <code>_showDeleteConfirmation()</code> hiện dialog xác nhận xóa, trả về true/false.
-- **Thao tác xóa**: <code>firestore.collection('notes').doc(id).delete()</code> xóa document theo id.
-- **Thông báo**: <code>_showSnackBar()</code> hiển thị thông báo trạng thái.
-- `_showSnackBar()`: Hiển thị thông báo trạng thái.
+- **Dialog xác nhận**: `_showDeleteConfirmation()` hiện dialog xác nhận xóa, trả về true/false.
+- **Thao tác xóa**: `firestore.collection('notes').doc(id).delete()` xóa document theo id.
+- **Thông báo**: `_showSnackBar()` hiển thị thông báo trạng thái.
 
 
 ### 3. UI/UX
@@ -212,7 +250,7 @@ Future<void> _deleteNote(String id) async {
 - **Form nhập liệu**: Có validation, loading, nút Add/Update/Cancel. Khi nhấn Edit sẽ load dữ liệu lên form.
 - **Danh sách notes**: Hiển thị loading khi fetch, empty state khi chưa có note, mỗi note có nút Edit/Delete.
 - **Dialog xác nhận xóa**: Trước khi xóa note sẽ hiện dialog xác nhận.
-- **Hiển thị thời gian**: Sử dụng hàm `_formatDate(Timestamp)` để chuyển timestamp thành chuỗi dễ đọc.
+- **Hiển thị thời gian**: Sử dụng hàm '_formatDate(Timestamp)' để chuyển timestamp thành chuỗi dễ đọc.
 
 
 ```dart
@@ -237,11 +275,11 @@ String _formatDate(Timestamp? timestamp) {
 }
 ```
 
-**Giải thích:**
+
 **Giải thích logic hiển thị thời gian:**
 
-- **Chuyển đổi kiểu**: <code>timestamp.toDate()</code> chuyển Firestore Timestamp thành <code>DateTime</code> của Dart.
-- **Tính toán thời gian**: <code>DateTime.now()</code> lấy thời gian hiện tại, <code>difference</code> tính khoảng cách thời gian.
+- **Chuyển đổi kiểu**: `timestamp.toDate()` chuyển Firestore Timestamp thành `DateTime` của Dart.
+- **Tính toán thời gian**: `DateTime.now()` lấy thời gian hiện tại, `difference` tính khoảng cách thời gian.
 - **Hiển thị thân thiện**: Trả về chuỗi thời gian tương đối như "2d ago", "5m ago"...
 - `difference`: Tính khoảng cách thời gian giữa hai mốc thời gian.
 
