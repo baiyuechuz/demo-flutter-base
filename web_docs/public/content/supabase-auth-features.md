@@ -9,7 +9,7 @@ category: "supabase"
 
 ## Tổng quan
 
-Dự án này triển khai một hệ thống authentication hoàn chỉnh sử dụng Supabase Auth với email/password, social login UI (không có logic), và state management. Hệ thống tích hợp với Row Level Security (RLS) và cung cấp user experience tối ưu.
+Dự án này triển khai một hệ thống xác thực hoàn chỉnh sử dụng Supabase Auth với email/mật khẩu, giao diện đăng nhập mạng xã hội (không có logic), và quản lý trạng thái. Hệ thống tích hợp với Bảo mật Cấp Hàng (RLS) và cung cấp trải nghiệm người dùng tối ưu.
 
 ## Implementation Flutter
 
@@ -37,12 +37,12 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   User? _currentUser;
 ```
 
-**Giải thích dependencies:**
-- `supabase_flutter`: Core Supabase client cho authentication
-- `flutter_svg`: Để hiển thị SVG icons cho social login buttons
-- `User?`: Nullable user object để track authentication state
+**Giải thích thư viện phụ thuộc:**
+- `supabase_flutter`: Client Supabase cốt lõi cho xác thực
+- `flutter_svg`: Để hiển thị biểu tượng SVG cho các nút đăng nhập mạng xã hội
+- `User?`: Đối tượng người dùng có thể null để theo dõi trạng thái xác thực
 
-### 2. Authentication State Management
+### 2. Quản Lý Trạng Thái Xác Thực
 
 ```dart
 @override
@@ -64,12 +64,12 @@ void _getCurrentUser() {
 }
 ```
 
-**Giải thích state management:**
-- `onAuthStateChange`: Stream listener cho real-time auth state changes
-- `data.session?.user`: Extract user từ session data
-- `currentUser`: Get current authenticated user khi app start
+**Giải thích quản lý trạng thái:**
+- `onAuthStateChange`: Trình lắng nghe luồng cho thay đổi trạng thái xác thực thời gian thực
+- `data.session?.user`: Trích xuất người dùng từ dữ liệu phiên
+- `currentUser`: Lấy người dùng đã xác thực hiện tại khi ứng dụng khởi động
 
-### 3. Sign Up Implementation
+### 3. Triển Khai Đăng Ký
 
 ```dart
 Future<void> _signUp() async {
@@ -111,14 +111,14 @@ Future<void> _signUp() async {
 }
 ```
 
-**Giải thích sign up flow:**
-- **Loading state**: Set loading để disable UI và show feedback
-- **Email verification**: Supabase tự động gửi email verification
-- **mounted check**: Tránh setState trên disposed widget
-- **Error handling**: Comprehensive try-catch với user feedback
-- **Form cleanup**: Clear fields sau successful signup
+**Giải thích quy trình đăng ký:**
+- **Trạng thái tải**: Đặt trạng thái tải để vô hiệu hóa giao diện và hiển thị phản hồi
+- **Xác minh email**: Supabase tự động gửi email xác minh
+- **Kiểm tra mounted**: Tránh setState trên widget đã được giải phóng
+- **Xử lý lỗi**: Try-catch toàn diện với phản hồi người dùng
+- **Dọn dẹp form**: Xóa các trường sau khi đăng ký thành công
 
-### 4. Sign In Implementation
+### 4. Triển Khai Đăng Nhập
 
 ```dart
 Future<void> _signIn() async {
@@ -160,12 +160,12 @@ Future<void> _signIn() async {
 }
 ```
 
-**Giải thích sign in process:**
-- `signInWithPassword()`: Supabase method cho email/password authentication
-- **Automatic session**: Session được tự động tạo và lưu
-- **State update**: Auth listener sẽ tự động update `_currentUser`
+**Giải thích quy trình đăng nhập:**
+- `signInWithPassword()`: Phương thức Supabase cho xác thực email/mật khẩu
+- **Phiên tự động**: Phiên được tự động tạo và lưu
+- **Cập nhật trạng thái**: Trình lắng nghe xác thực sẽ tự động cập nhật `_currentUser`
 
-### 5. Sign Out Implementation
+### 5. Triển Khai Đăng Xuất
 
 ```dart
 Future<void> _signOut() async {
@@ -192,12 +192,12 @@ Future<void> _signOut() async {
 }
 ```
 
-**Giải thích sign out:**
-- `signOut()`: Clear session và tokens
-- **Automatic cleanup**: Auth listener sẽ set `_currentUser = null`
-- **Simple operation**: Ít có khả năng fail hơn so với sign in/up
+**Giải thích đăng xuất:**
+- `signOut()`: Xóa phiên và tokens
+- **Dọn dẹp tự động**: Trình lắng nghe xác thực sẽ đặt `_currentUser = null`
+- **Thao tác đơn giản**: Ít có khả năng thất bại hơn so với đăng nhập/đăng ký
 
-### 6. Social Login Buttons (UI Only)
+### 6. Nút Đăng Nhập Mạng Xã Hội (Chỉ Giao Diện)
 
 ```dart
 Future<void> _signInWithGoogle() async {
@@ -237,14 +237,14 @@ Future<void> _signInWithFacebook() async {
 }
 ```
 
-**Giải thích social login placeholders:**
-- **UI-only implementation**: Chỉ có buttons và placeholder logic
-- **Consistent messaging**: Orange color để indicate "not implemented"
-- **Future expansion**: Structure sẵn sàng cho OAuth implementation
+**Giải thích chỗ giữ chỗ đăng nhập mạng xã hội:**
+- **Triển khai chỉ giao diện**: Chỉ có các nút và logic giữ chỗ
+- **Thông báo nhất quán**: Màu cam để chỉ báo "chưa được triển khai"
+- **Mở rộng tương lai**: Cấu trúc sẵn sàng cho triển khai OAuth
 
 ## Giao Diện Người Dùng
 
-### 1. Authentication Form
+### 1. Form Xác Thực
 
 ```dart
 Widget _buildAuthForm() {
@@ -308,14 +308,14 @@ Widget _buildAuthForm() {
       ),
 ```
 
-**Giải thích form design:**
-- **Dark theme**: Consistent với app design
-- **Dynamic labels**: Change based on sign up/in mode
-- **Input validation**: Email keyboard type và password obscuring
-- **Loading states**: Disable button khi đang process
-- **Mode switching**: Toggle giữa sign up và sign in
+**Giải thích thiết kế form:**
+- **Chủ đề tối**: Nhất quán với thiết kế ứng dụng
+- **Nhãn động**: Thay đổi dựa trên chế độ đăng ký/đăng nhập
+- **Xác thực đầu vào**: Loại bàn phím email và ẩn mật khẩu
+- **Trạng thái tải**: Vô hiệu hóa nút khi đang xử lý
+- **Chuyển đổi chế độ**: Chuyển đổi giữa đăng ký và đăng nhập
 
-### 2. Social Login Section
+### 2. Phần Đăng Nhập Mạng Xã Hội
 
 ```dart
 if (!_isSignUp) ...[
@@ -373,15 +373,15 @@ if (!_isSignUp) ...[
 ],
 ```
 
-**Giải thích social section:**
-- **Conditional display**: Chỉ hiện với sign in mode
-- **Visual separator**: Divider với "Or continue with" text
-- **SVG icons**: Custom social media icons từ assets
-- **Icon-only design**: Clean, minimalist approach
-- **Proper spacing**: 32px between icons cho touch-friendly UX
-- **Color filtering**: GitHub icon màu trắng để contrast với dark background
+**Giải thích phần mạng xã hội:**
+- **Hiển thị có điều kiện**: Chỉ hiển thị với chế độ đăng nhập
+- **Phân cách trực quan**: Dải phân cách với văn bản "Hoặc tiếp tục với"
+- **Biểu tượng SVG**: Biểu tượng mạng xã hội tùy chỉnh từ assets
+- **Thiết kế chỉ biểu tượng**: Cách tiếp cận sạch sẽ, tối giản
+- **Khoảng cách phù hợp**: 32px giữa các biểu tượng cho UX thân thiện với cảm ứng
+- **Lọc màu**: Biểu tượng GitHub màu trắng để tương phản với nền tối
 
-### 3. User Profile Display
+### 3. Hiển Thị Hồ Sơ Người Dùng
 
 ```dart
 Widget _buildUserProfile() {
@@ -435,13 +435,13 @@ Widget _buildUserProfile() {
 }
 ```
 
-**Giải thích profile display:**
-- **User information**: Display email và user ID
-- **Styled container**: Semi-transparent background với border
-- **Fallback values**: Handle null values gracefully
-- **Sign out button**: Prominent placement với consistent styling
+**Giải thích hiển thị hồ sơ:**
+- **Thông tin người dùng**: Hiển thị email và ID người dùng
+- **Container được tạo kiểu**: Nền bán trong suốt với viền
+- **Giá trị dự phòng**: Xử lý giá trị null một cách tinh tế
+- **Nút đăng xuất**: Vị trí nổi bật với kiểu dáng nhất quán
 
-### 4. Main Build Method
+### 4. Phương Thức Build Chính
 
 ```dart
 @override
@@ -495,11 +495,11 @@ Widget build(BuildContext context) {
 }
 ```
 
-**Giải thích main layout:**
-- **Conditional rendering**: Switch giữa auth form và user profile
-- **Visual feedback**: Different icons và messages cho authenticated/unauthenticated states
-- **Scrollable content**: SingleChildScrollView để handle keyboard
-- **Consistent theming**: Dark theme throughout
+**Giải thích bố cục chính:**
+- **Hiển thị có điều kiện**: Chuyển đổi giữa form xác thực và hồ sơ người dùng
+- **Phản hồi trực quan**: Biểu tượng và thông báo khác nhau cho trạng thái đã/chưa xác thực
+- **Nội dung có thể cuộn**: SingleChildScrollView để xử lý bàn phím
+- **Chủ đề nhất quán**: Chủ đề tối xuyên suốt
 
 ## Utility Functions
 
