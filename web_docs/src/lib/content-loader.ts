@@ -124,11 +124,6 @@ export async function discoverContentFiles(): Promise<ContentFile[]> {
 		"getting-started.md",
 		"setup_supabase.md",
 		"setup_firebase.md",
-		"supabase-database-features.md",
-		"supabase-storage-features.md",
-		"supabase-auth-features.md",
-		"firebase-database-features.md",
-		"firebase-auth-features.md",
 	];
 
 	const contentFiles: ContentFile[] = [];
